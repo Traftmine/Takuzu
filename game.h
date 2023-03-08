@@ -2,7 +2,7 @@
  * @file game.h
  * @brief Basic Game Functions.
  * @details See @ref index for further details.
- * @copyright University of Bordeaux. All rights reserved, 2021.
+ * @copyright University of Bordeaux. All rights reserved, 2022.
  **/
 
 #ifndef __GAME_H__

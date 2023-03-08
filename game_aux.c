@@ -1,100 +1,80 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include "game.h"
+/**
+ * @file game_aux.c
+ * @copyright University of Bordeaux. All rights reserved, 2022.
+ **/
+
 #include "game_aux.h"
 
-void game_print(cgame g){
-    printf("   ");
-    for(uint i = 0; i< DEFAULT_SIZE ; i++){ // print of 012345
-        printf("%u",i);
-    }
-    printf("\n");
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-    printf("   ");
-    for(uint i = 0; i< DEFAULT_SIZE ; i++){
-        printf("-");
-    }
-    printf("\n");
+#include "game.h"
+#include "game_ext.h"
+#include "game_private.h"
+#include "game_struct.h"
 
-    for(uint x = 0; x< DEFAULT_SIZE ; x++){
-        printf("x |");
-        for(uint y = 0; y<DEFAULT_SIZE; y++){
-            if(game_get_square(g,x,y) == S_EMPTY){
-                printf(" ");
-            }
-            else{
-                if(game_get_square(g,x,y) == S_ONE){
-                    printf("b");
-                }
-                else if(game_get_square(g,x,y) == S_ZERO){
-                    printf("w");
-                }
-                else if(game_get_square(g,x,y) == S_IMMUTABLE_ONE){
-                    printf("B");
-                }
-                else if(game_get_square(g,x,y) == S_IMMUTABLE_ZERO){
-                    printf("W");
-                }
-            }
-        }
-        printf("|\n");
+/* ************************************************************************** */
+
+#define SE S_EMPTY
+#define S0 S_ZERO
+#define S1 S_ONE
+#define SI0 S_IMMUTABLE_ZERO
+#define SI1 S_IMMUTABLE_ONE
+
+/* ************************************************************************** */
+
+static square grid_default[] = {
+    SE, SI1, SI0, SE, SE,  SE,  /* row 0 */
+    SE, SE,  SE,  SE, SE,  SE,  /* row 1 */
+    SE, SI0, SE,  SE, SI0, SE,  /* row 2 */
+    SE, SI0, SI1, SE, SE,  SE,  /* row 3 */
+    SE, SE,  SI1, SE, SE,  SI0, /* row 4 */
+    SE, SE,  SE,  SE, SE,  SI0, /* row 5 */
+};
+
+/* ************************************************************************** */
+
+static square grid_default_sol[] = {
+    S0, SI1, SI0, S1, S0,  S1,  /* row 0 */
+    S0, S1,  S1,  S0, S1,  S0,  /* row 1 */
+    S1, SI0, S0,  S1, SI0, S1,  /* row 2 */
+    S1, SI0, SI1, S0, S0,  S1,  /* row 3 */
+    S0, S1,  SI1, S0, S1,  SI0, /* row 4 */
+    S1, S0,  S0,  S1, S1,  SI0, /* row 5 */
+};
+
+/* ************************************************************************** */
+
+game game_default(void) { return game_new(grid_default); }
+
+/* ************************************************************************** */
+
+game game_default_solution(void) { return game_new(grid_default_sol); }
+
+/* ************************************************************************** */
+
+void game_print(cgame g) {
+  assert(g);
+  printf("   ");
+  for (uint j = 0; j < game_nb_cols(g); j++) printf("%d", j);
+  printf("\n");
+  printf("   ");
+  for (uint j = 0; j < game_nb_cols(g); j++) printf("-");
+  printf("\n");
+  for (uint i = 0; i < game_nb_rows(g); i++) {
+    printf("%d |", i);
+    for (uint j = 0; j < game_nb_cols(g); j++) {
+      square s = game_get_square(g, i, j);
+      char c = _square2str(s);
+      printf("%c", c);
     }
-    printf("   ");
-    for(uint i = 0; i< DEFAULT_SIZE ; i++){
-        printf("-");
-    }
-    printf("\n");
+    printf("|\n");
+  }
+  printf("   ");
+  for (uint j = 0; j < game_nb_cols(g); j++) printf("-");
+  printf("\n");
 }
 
-game game_default(void){
-    game g;
-    for (int i = 0; i < DEFAULT_SIZE; i++){
-        for (int j = 0; j < DEFAULT_SIZE; j++){
-             game_set_square(g,i,j,S_EMPTY);
-        }
-    }
-    game_set_square(g,0,1,S_IMMUTABLE_ONE);
-    game_set_square(g,0,2,S_IMMUTABLE_ZERO);
-    game_set_square(g,2,1,S_IMMUTABLE_ZERO);
-    game_set_square(g,2,4,S_IMMUTABLE_ZERO);
-    game_set_square(g,3,1,S_IMMUTABLE_ZERO);
-    game_set_square(g,3,2,S_IMMUTABLE_ONE);
-    game_set_square(g,4,2,S_IMMUTABLE_ONE);
-    game_set_square(g,4,5,S_IMMUTABLE_ZERO);
-    game_set_square(g,5,5,S_IMMUTABLE_ZERO);
-    return g;
-}
-
-game game_default_solution(void){
-    game g;
-    g = game_default();
-    game_set_square(g,0,0,S_ZERO);
-    game_set_square(g,0,3,S_ONE);
-    game_set_square(g,0,4,S_ZERO);
-    game_set_square(g,0,5,S_ONE);
-    game_set_square(g,1,0,S_ZERO);
-    game_set_square(g,1,1,S_ONE);
-    game_set_square(g,1,2,S_ONE);
-    game_set_square(g,1,3,S_ZERO);
-    game_set_square(g,1,4,S_ONE);
-    game_set_square(g,1,5,S_ZERO);
-    game_set_square(g,2,0,S_ONE);
-    game_set_square(g,2,2,S_ZERO);
-    game_set_square(g,2,3,S_ONE);
-    game_set_square(g,2,5,S_ONE);
-    game_set_square(g,3,0,S_ONE);
-    game_set_square(g,3,3,S_ZERO);
-    game_set_square(g,3,4,S_ZERO);
-    game_set_square(g,3,5,S_ONE);
-    game_set_square(g,4,0,S_ZERO);
-    game_set_square(g,4,1,S_ONE);
-    game_set_square(g,4,3,S_ZERO);
-    game_set_square(g,4,4,S_ONE);
-    game_set_square(g,5,0,S_ONE);
-    game_set_square(g,5,1,S_ZERO);
-    game_set_square(g,5,2,S_ZERO);
-    game_set_square(g,5,3,S_ONE);
-    game_set_square(g,5,4,S_ONE);
-    return g;
-}
+/* ************************************************************************** */
