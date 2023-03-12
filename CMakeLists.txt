@@ -27,6 +27,8 @@ add_test(test_leoroyer_test_undo ./game_test_leoroyer game_undo)
 add_test(test_leoroyer_test_redo ./game_test_leoroyer game_redo)
 add_test(test_leoroyer_test_load ./game_test_leoroyer game_load)
 add_test(test_leoroyer_test_save ./game_test_leoroyer game_save)
+add_test(test_leoroyer_test_solve ./game_test_leoroyer game_solve)
+add_test(test_leoroyer_test_nb_solutions ./game_test_leoroyer game_nb_solve)
 
 add_executable(game_test_jzebian game_test_jzebian.c)
 target_link_libraries(game_test_jzebian game)

@@ -19,7 +19,7 @@
 /*                                 GAME BASIC                                 */
 /* ************************************************************************** */
 
-game game_new(square* squares) { return game_new_ext(DEFAULT_SIZE, DEFAULT_SIZE, squares, false, false); }
+game game_new(square *squares) { return game_new_ext(DEFAULT_SIZE, DEFAULT_SIZE, squares, false, false); }
 
 /* ************************************************************************** */
 

@@ -51,7 +51,9 @@ bool test_get_square(void) {
 // TEST GAME DEFAULT //
 
 bool test_default(void) {
-  game g = game_default();  // creation of two games in order to compare them, game_default must be empty when there's no immutable square
+  game g = game_default();  // creation of two games in order to compare them,
+                            // game_default must be empty when there's no
+                            // immutable square
   game g_solution = game_default_solution();
   for (int i = 0; i < game_nb_rows(g); i++) {
     for (int j = 0; j < game_nb_cols(g); j++) {
@@ -70,7 +72,8 @@ bool test_default(void) {
 // TEST GET NUMBER //
 
 bool test_get_number(void) {
-  game g = game_new_empty();  // Setting squares in an empty game and then checking if we have the right square with the function
+  game g = game_new_empty();  // Setting squares in an empty game and then checking if
+                              // we have the right square with the function
   game_set_square(g, 0, 0, S_EMPTY);
   game_set_square(g, 0, 1, S_ZERO);
   game_set_square(g, 0, 2, S_ONE);
@@ -88,7 +91,8 @@ bool test_get_number(void) {
 // TEST IS IMMUTABLE //
 
 bool test_is_immutable(void) {
-  game g = game_default();  // Creating a game that already has immutables, then checking if the function finds them
+  game g = game_default();  // Creating a game that already has immutables, then
+                            // checking if the function finds them
 
   if (game_is_immutable(g, 0, 1) == true && game_is_immutable(g, 2, 1) == true && game_is_immutable(g, 3, 2) == true && game_is_immutable(g, 4, 5) == true &&
       game_is_immutable(g, 5, 4) == false && game_is_immutable(g, 0, 0) == false) {
@@ -166,7 +170,8 @@ bool test_get_next_number(void) {
 // TEST UNDO //
 
 bool test_undo(void) {
-  game g = game_new_empty();  // We play a move and then undo it, so the square must be empty
+  game g = game_new_empty();  // We play a move and then undo it, so the square
+                              // must be empty
   game_play_move(g, 0, 1, S_ONE);
   game_undo(g);
   ASSERT(game_get_square(g, 0, 1) == S_EMPTY);
@@ -177,13 +182,16 @@ bool test_undo(void) {
 // TEST REDO //
 
 bool test_redo(void) {
-  game g = game_new_empty();        // We play a move and then undo it, the square must be empty, then we redo it,
-  game_play_move(g, 1, 2, S_ZERO);  // so the square must be same as in the begining
+  game g = game_new_empty();  // We play a move and then undo it, the square must
+                              // be empty, then we redo it,
+  game_play_move(g, 1, 2,
+                 S_ZERO);  // so the square must be same as in the begining
   game_undo(g);
   ASSERT(game_get_square(g, 1, 2) == S_EMPTY);
   game_redo(g);
   ASSERT(game_get_square(g, 1, 2) == S_ZERO);
-  // ASSERT(queue_length(g->pile_undo) == 1);  // check si queue_undo avant redo == avec queue_undo après redo
+  // ASSERT(queue_length(g->pile_undo) == 1);  // check si queue_undo avant redo
+  // == avec queue_undo après redo
   game_delete(g);
   return true;
 }
@@ -221,18 +229,21 @@ bool test_load(void) {
 
 bool test_save(void) {
   // Create a test file with the expected data
-  game g = game_new_empty_ext(3, 3, true, true);
+  game g = game_new_empty_ext(4, 4, true, true);
   game_set_square(g, 0, 0, S_ONE);
   game_set_square(g, 0, 1, S_IMMUTABLE_ONE);
   game_set_square(g, 0, 2, S_ONE);
+  game_set_square(g, 0, 3, S_ONE);
 
   game_set_square(g, 1, 0, S_ZERO);
   game_set_square(g, 1, 1, S_IMMUTABLE_ZERO);
   game_set_square(g, 1, 2, S_ZERO);
+  game_set_square(g, 1, 3, S_ZERO);
 
   game_set_square(g, 2, 0, S_EMPTY);
   game_set_square(g, 2, 1, S_EMPTY);
   game_set_square(g, 2, 2, S_EMPTY);
+  game_set_square(g, 1, 3, S_EMPTY);
 
   game_save(g, "test.txt");
 
@@ -243,8 +254,8 @@ bool test_save(void) {
   }
   int i, j, wrapping, unique;
   fscanf(f, "%d %d %d %d\n", &i, &j, &wrapping, &unique);
-  ASSERT(i == 3);
-  ASSERT(j == 3);
+  ASSERT(i == 4);
+  ASSERT(j == 4);
   ASSERT(wrapping == 1);
   ASSERT(unique == 1);
   char square;
@@ -254,13 +265,16 @@ bool test_save(void) {
   ASSERT(square == 'B');
   fscanf(f, "%c", &square);
   ASSERT(square == 'b');
-  fscanf(f, "%c", &square);  // In order to jump the \n and not have it in the scanf
+  fscanf(f, "%c",
+         &square);  // In order to jump the \n and not have it in the scanf
+  fscanf(f, "%c", &square);
   fscanf(f, "%c", &square);
   ASSERT(square == 'w');
   fscanf(f, "%c", &square);
   ASSERT(square == 'W');
   fscanf(f, "%c", &square);
   ASSERT(square == 'w');
+  fscanf(f, "%c", &square);
   fscanf(f, "%c", &square);
   fscanf(f, "%c", &square);
   ASSERT(square == 'e');
@@ -275,6 +289,41 @@ bool test_save(void) {
   return true;
 }
 
+// TEST SOLVE //
+bool test_solve(void) {
+  game g = game_default();
+  game g_4_4 = game_new_empty_ext(4, 4, false, false);
+  ASSERT(game_solve(g));
+  ASSERT(game_solve(g_4_4));
+  game_set_square(g, 0, 0, S_IMMUTABLE_ONE);
+  game_set_square(g, 0, 1, S_IMMUTABLE_ONE);
+  game_set_square(g, 0, 2, S_IMMUTABLE_ONE);
+  ASSERT(!game_solve(g));
+  game_set_square(g_4_4, 0, 0, S_IMMUTABLE_ONE);
+  game_set_square(g_4_4, 0, 1, S_IMMUTABLE_ONE);
+  game_set_square(g_4_4, 0, 2, S_IMMUTABLE_ONE);
+  ASSERT(!game_solve(g_4_4));
+  game_delete(g);
+  game_delete(g_4_4);
+  return true;
+}
+// TEST NOMBRE SOLUTION //
+bool test_nb_solutions(void) {
+  game g = game_default();
+  game g_4_4 = game_new_empty_ext(4, 4, false, false);
+  game g_4_4_unique = game_new_empty_ext(4, 4, false, true);
+  ASSERT(game_nb_solutions(g) == 1);
+  ASSERT(game_nb_solutions(g_4_4) == 90);
+  ASSERT(game_nb_solutions(g_4_4_unique) == 72);
+  game_set_square(g, 0, 0, S_IMMUTABLE_ONE);
+  game_set_square(g, 0, 1, S_IMMUTABLE_ONE);
+  game_set_square(g, 0, 2, S_IMMUTABLE_ONE);
+  ASSERT(game_nb_solutions(g) == 0);
+  game_delete(g);
+  game_delete(g_4_4);
+  game_delete(g_4_4_unique);
+  return true;
+}
 void usage(int argc, char *argv[]) {
   fprintf(stderr, "Usage: %s <testname> [<...>]\n", argv[0]);
   exit(EXIT_FAILURE);
@@ -312,6 +361,10 @@ int main(int argc, char *argv[]) {
     test_result = test_load();
   else if (strcmp("game_save", argv[1]) == 0)
     test_result = test_save();
+  else if (strcmp("game_solve", argv[1]) == 0)
+    test_result = test_solve();
+  else if (strcmp("game_nb_solve", argv[1]) == 0)
+    test_result = test_nb_solutions();
   else {
     fprintf(stderr, "Error: test \"%s\" not found!\n", argv[1]);
     exit(EXIT_FAILURE);

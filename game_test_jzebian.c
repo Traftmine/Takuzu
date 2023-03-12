@@ -14,14 +14,17 @@ bool test_dummy() { return true; }
 
 // TEST GAME NEW //
 
-bool test_game_new() {  // Given a random array of squares it just checks if game new really gives each cell it's square value
-  square* s = (square*)malloc(DEFAULT_SIZE * DEFAULT_SIZE * sizeof(square));
+bool test_game_new() {  // Given a random array of squares it just checks if game
+                        // new really gives each cell it's square value
+  square *s = (square *)malloc(DEFAULT_SIZE * DEFAULT_SIZE * sizeof(square));
   assert(s);
 
   game g = game_new(s);
 
   if (g == NULL) {
-    fprintf(stderr, "game_new function did not do it's job: returned a NULL pointer to the game!\n");
+    fprintf(stderr,
+            "game_new function did not do it's job: returned a NULL "
+            "pointer to the game!\n");
     game_delete(g);
     return false;
   }
@@ -29,7 +32,10 @@ bool test_game_new() {  // Given a random array of squares it just checks if gam
   for (uint x = 0; x < DEFAULT_SIZE; x++) {
     for (uint y = 0; y < DEFAULT_SIZE; y++) {
       if (game_get_square(g, x, y) != s[(x * DEFAULT_SIZE) + y]) {
-        fprintf(stderr, "game_new function did not set correctly the square of cell (%u,%u)!\n", x, y);
+        fprintf(stderr,
+                "game_new function did not set correctly the square of cell "
+                "(%u,%u)!\n",
+                x, y);
         game_delete(g);
         return false;
       }
@@ -42,7 +48,8 @@ bool test_game_new() {  // Given a random array of squares it just checks if gam
 
 // TEST GAME NEW EXT //
 
-bool test_game_new_ext() {  // Same as the previous test but with the extention version so additional params
+bool test_game_new_ext() {  // Same as the previous test but with the extention
+                            // version so additional params
   square s[24] = {S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY,
                   S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY};
   uint rows = 4;
@@ -58,7 +65,9 @@ bool test_game_new_ext() {  // Same as the previous test but with the extention 
     return false;
   }
   if (game_nb_rows(g) == cols && game_nb_cols(g) == rows) {
-    fprintf(stderr, "Error: in game_new_empty, function inversed g->nb_rows and g->nb_cols\n");
+    fprintf(stderr,
+            "Error: in game_new_empty, function inversed g->nb_rows "
+            "and g->nb_cols\n");
     game_delete(g);
     return false;
   }
@@ -106,7 +115,8 @@ bool test_game_new_ext() {  // Same as the previous test but with the extention 
 
 // TEST GAME NEW EMPTY //
 
-bool test_game_new_empty() {  // Checks if the function returns a game where all it's square are set to empty
+bool test_game_new_empty() {  // Checks if the function returns a game where all
+                              // it's square are set to empty
   game g = game_new_empty();
 
   if (g == NULL) {
@@ -137,28 +147,38 @@ bool test_game_new_empty_ext() {
 
   game g = game_new_empty_ext(nb_rows, nb_cols, wrapping, unique);
   if (g == NULL) {
-    fprintf(stderr, "game_new_empty_ext function did not do it's job: returned a NULL pointer to the game!\n");
+    fprintf(stderr,
+            "game_new_empty_ext function did not do it's job: returned "
+            "a NULL pointer to the game!\n");
     game_delete(g);
     return false;
   }
   if (game_is_wrapping(g) != wrapping) {  // checking the wrapping field
-    fprintf(stderr, "game_new_empty_ext function did not put the wrapping field of the structure to the right value!\n");
+    fprintf(stderr,
+            "game_new_empty_ext function did not put the wrapping "
+            "field of the structure to the right value!\n");
     game_delete(g);
     return false;
   }
   if (game_is_unique(g) != unique) {  // checking the unique field
-    fprintf(stderr, "game_new_empty_ext function did not put the unique field of the structure to the right value!\n");
+    fprintf(stderr,
+            "game_new_empty_ext function did not put the unique field "
+            "of the structure to the right value!\n");
     game_delete(g);
     return false;
   }
 
   if (game_nb_cols(g) != nb_cols) {  // checking the nb_cols field
-    fprintf(stderr, "game_new_empty_ext function did not put the nb_cols field of the structure to the right value!\n");
+    fprintf(stderr,
+            "game_new_empty_ext function did not put the nb_cols field "
+            "of the structure to the right value!\n");
     game_delete(g);
     return false;
   }
   if (game_nb_rows(g) != nb_rows) {  // checking the nb_rows field
-    fprintf(stderr, "game_new_empty_ext function did not put the nb_rows field of the structure to the right value!\n");
+    fprintf(stderr,
+            "game_new_empty_ext function did not put the nb_rows field "
+            "of the structure to the right value!\n");
     game_delete(g);
     return false;
   }
@@ -209,7 +229,9 @@ bool test_game_equal() {
   game g = game_default();
 
   if (cg == NULL || g == NULL) {
-    fprintf(stderr, "Error: game_default returned a NULL pointer to the game in functon test_game_equal!\n");
+    fprintf(stderr,
+            "Error: game_default returned a NULL pointer to the game "
+            "in functon test_game_equal!\n");
     game_delete(g);
     return false;
   }
@@ -218,7 +240,9 @@ bool test_game_equal() {
   // and game_equal returning true
 
   if ((cg == NULL || g == NULL) && (game_equal(cg, g) == true)) {
-    fprintf(stderr, "Error: at least one of the 2 game pointers is NULL while the function game_equal returned true!\n");
+    fprintf(stderr,
+            "Error: at least one of the 2 game pointers is NULL while "
+            "the function game_equal returned true!\n");
     game_delete(g);
     return false;
   }
@@ -235,7 +259,10 @@ bool test_game_equal() {
 
       if ((game_get_number(cg, x, y) == 0 && game_get_square(cg, x, y) == S_IMMUTABLE_ZERO) &&
           (game_get_number(g, x, y) == 0 && game_get_square(g, x, y) == S_ZERO) && game_equal(cg, g) == true) {
-        fprintf(stderr, "Error: game_equal function returned true while the squares in cell (%u,%u) are different in the 2 games given as params!\n", x, y);
+        fprintf(stderr,
+                "Error: game_equal function returned true while the squares in "
+                "cell (%u,%u) are different in the 2 games given as params!\n",
+                x, y);
         game_delete(g);
         return false;
 
@@ -243,7 +270,10 @@ bool test_game_equal() {
 
       else if ((game_get_number(cg, x, y) == 1 && game_get_square(cg, x, y) == S_IMMUTABLE_ONE) &&
                (game_get_number(g, x, y) == 1 && game_get_square(g, x, y) == S_ONE) && game_equal(cg, g) == true) {
-        fprintf(stderr, "Error: game_equal function returned true while the squares in cell (%u,%u) are different in the 2 games given as params!\n", x, y);
+        fprintf(stderr,
+                "Error: game_equal function returned true while the squares in "
+                "cell (%u,%u) are different in the 2 games given as params!\n",
+                x, y);
         game_delete(g);
         return false;
       }
@@ -256,7 +286,7 @@ bool test_game_equal() {
 // TEST GAME DELETE //
 
 bool test_game_delete() {
-  square* s = (square*)malloc(DEFAULT_SIZE * DEFAULT_SIZE * sizeof(square));
+  square *s = (square *)malloc(DEFAULT_SIZE * DEFAULT_SIZE * sizeof(square));
   assert(s);
 
   game g = game_new(s);
@@ -274,7 +304,7 @@ bool test_game_delete() {
 // TEST GAME SET SQUARE //
 
 bool test_game_set_square() {
-  square* p_s = (square*)malloc(DEFAULT_SIZE * DEFAULT_SIZE * sizeof(square));
+  square *p_s = (square *)malloc(DEFAULT_SIZE * DEFAULT_SIZE * sizeof(square));
   assert(p_s);
 
   game g = game_new(p_s);
@@ -349,7 +379,7 @@ bool test_game_is_unique() {
 
 /* ********** MAIN ROUTINE ********** */
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
   if (argc != 2) {
     fprintf(stderr, "Error: Only the excutable and the test name are required\n");
     fprintf(stderr, "Example: $./game_test_jzebian game_new\n");

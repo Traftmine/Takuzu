@@ -4,11 +4,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "game.h"
+#include "game_aux.h"
 #include "game_ext.h"
 
-game game_load(char* filename) {
+/* ************************************************************************** */
+
+game game_load(char *filename) {
   // Opening the file and checking if it was opened
-  FILE* f = fopen(filename, "r");
+  FILE *f = fopen(filename, "r");
   if (f == NULL) {
     printf("That file doesn't exist\n");
     exit(EXIT_FAILURE);
@@ -49,13 +53,15 @@ game game_load(char* filename) {
   return g;
 }
 
-void game_save(cgame g, char* filename) {
+/* ************************************************************************** */
+
+void game_save(cgame g, char *filename) {
   if (g == NULL) {
     exit(EXIT_FAILURE);
   }
   uint i = game_nb_rows(g);
   uint j = game_nb_cols(g);
-  FILE* fichier = NULL;
+  FILE *fichier = NULL;
   fichier = fopen(filename, "w");
   if (fichier == NULL) {
     exit(EXIT_FAILURE);
@@ -97,77 +103,64 @@ void game_save(cgame g, char* filename) {
   fclose(fichier);
 }
 
-void game_nb_solutions_rec(uint i, uint j, game g, uint * counter){
+/* ************************************************************************** */
 
-  if(i == game_nb_cols(g) && j == game_nb_rows(g) ){
-    if( game_is_over(g) ){
-      (*counter) ++;
+void game_solve_rec(game g, uint i, uint j, uint *counter) {
+  if (game_nb_rows(g) <= i) {
+    if (game_is_over(g)) {
+      (*counter)++;
     }
-    return ;
-  }
-  // first case where the square is 0
-  game_play_move(g, i, j, S_ZERO);
-  if( i == game_nb_cols(g) ){
-    j= j+1;
-  }
-  game_nb_solutions_rec(i+1, j , g, counter);
+  } else if (game_nb_cols(g) <= j) {
+    game_solve_rec(g, i + 1, 0, counter);
+  } else if (game_is_immutable(g, i, j)) {
+    game_solve_rec(g, i, j + 1, counter);
+  } else {
+    game_set_square(g, i, j, S_ZERO);
+    game_solve_rec(g, i, j + 1, counter);
 
-  //second case where the sqaure is 1
-  game_play_move(g, i, j, S_ONE);
-  if( i == game_nb_cols(g) ){
-      j= j+1;
-    }
-  game_nb_solutions_rec(i+1,j, g, counter);
-  
+    game_set_square(g, i, j, S_ONE);
+    game_solve_rec(g, i, j + 1, counter);
+  }
 }
 
-uint game_nb_solutions(cgame g){
-  uint i = 0, j = 0;
-  uint counter = 0;
-  game g_nb_sols = game_copy(g); // copy the game because it's unchangeable so that I can change it when calling recursive version
-  game_nb_solutions_rec(i,j,g_nb_sols,&counter);
+/* ************************************************************************** */
+
+game one_game_solution(game g, uint i, uint j) {
+  if (game_nb_rows(g) <= i) {
+    if (game_is_over(g)) {
+      return g;
+    }
+    return NULL;
+  } else if (game_nb_cols(g) <= j) {
+    return one_game_solution(g, i + 1, 0);
+  } else if (game_is_immutable(g, i, j)) {
+    return one_game_solution(g, i, j + 1);
+  } else {
+    game_set_square(g, i, j, S_ZERO);
+    game game_solution = one_game_solution(g, i, j + 1);
+    if (game_solution != NULL) {
+      return game_solution;
+    }
+    game_set_square(g, i, j, S_ONE);
+    return one_game_solution(g, i, j + 1);
+  }
+  return NULL;
+}
+
+/* ************************************************************************** */
+
+uint game_nb_solutions(cgame g) {
+  uint i = 0, j = 0, counter = 0;
+  game g_nb_sols = game_copy(g);  // copy the game because it's unchangeable so that I can change it when calling recursive version
+  game_solve_rec(g_nb_sols, i, j, &counter);
   return counter;
 }
 
-bool game_solve_rec(uint i, uint j, game g, uint counter){
-  if(i == game_nb_cols(g) && j == game_nb_rows(g) ){
-    if( game_is_over(g) ){
-      return true;
-    }
-    else{
-      if(counter == game_nb_solutions(g)){
-        game_restart(g);
-        return false;
-      }
-      else{
-      counter++;
-      game_restart(g);
-      game_solve_rec(0,0,g,counter);
-      }
-    }
-  }
-  // first case where the square is 0
-  game_play_move(g, i, j, S_ZERO);
-  if( i == game_nb_cols(g) ){
-    j= j+1;
-  }
-  game_solve_rec(i+1, j , g,counter);
-
-  //second case where the sqaure is 1
-  game_play_move(g, i, j, S_ONE);
-  if( i == game_nb_cols(g) ){
-      j= j+1;
-    }
-  game_solve_rec(i+1,j, g,counter);
-}
-
-bool game_solve(game g){
-  uint i = 0, j = 0, counter = 0;
-
-  if (game_nb_solutions(g) == 0){
+/* ************************************************************************** */
+bool game_solve(game g) {
+  if (game_nb_solutions(g) <= 0) {
     return false;
+  } else {
+    return true;
   }
-  else{
-    return game_solve_rec(i,j,g,counter);
-  } 
 }

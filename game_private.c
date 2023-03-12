@@ -19,9 +19,9 @@
 /*                             STACK ROUTINES                                 */
 /* ************************************************************************** */
 
-void _stack_push_move(queue* q, move m) {
+void _stack_push_move(queue *q, move m) {
   assert(q);
-  move* pm = malloc(sizeof(move));
+  move *pm = malloc(sizeof(move));
   assert(pm);
   *pm = m;
   queue_push_head(q, pm);
@@ -29,9 +29,9 @@ void _stack_push_move(queue* q, move m) {
 
 /* ************************************************************************** */
 
-move _stack_pop_move(queue* q) {
+move _stack_pop_move(queue *q) {
   assert(q);
-  move* pm = queue_pop_head(q);
+  move *pm = queue_pop_head(q);
   assert(pm);
   move m = *pm;
   free(pm);
@@ -40,14 +40,14 @@ move _stack_pop_move(queue* q) {
 
 /* ************************************************************************** */
 
-bool _stack_is_empty(queue* q) {
+bool _stack_is_empty(queue *q) {
   assert(q);
   return queue_is_empty(q);
 }
 
 /* ************************************************************************** */
 
-void _stack_clear(queue* q) {
+void _stack_clear(queue *q) {
   assert(q);
   queue_clear_full(q, free);
   assert(queue_is_empty(q));

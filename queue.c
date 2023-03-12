@@ -7,17 +7,17 @@
 /* *********************************************************** */
 
 struct queue_s {
-  struct element_s* head;
-  struct element_s* tail;
+  struct element_s *head;
+  struct element_s *tail;
   unsigned int length;
 };
 
 /* *********************************************************** */
 
 struct element_s {
-  void* data;
-  struct element_s* next;
-  struct element_s* prev;
+  void *data;
+  struct element_s *next;
+  struct element_s *prev;
 };
 
 /* *********************************************************** */
@@ -27,8 +27,8 @@ typedef struct element_s element_t;
 
 /* *********************************************************** */
 
-queue* queue_new() {
-  queue* q = malloc(sizeof(queue));
+queue *queue_new() {
+  queue *q = malloc(sizeof(queue));
   assert(q);
   q->length = 0;
   q->tail = q->head = NULL;
@@ -37,9 +37,9 @@ queue* queue_new() {
 
 /* *********************************************************** */
 
-void queue_push_head(queue* q, void* data) {
+void queue_push_head(queue *q, void *data) {
   assert(q);
-  element_t* e = malloc(sizeof(element_t));
+  element_t *e = malloc(sizeof(element_t));
   assert(e);
   e->data = data;
   e->prev = NULL;
@@ -52,9 +52,9 @@ void queue_push_head(queue* q, void* data) {
 
 /* *********************************************************** */
 
-void queue_push_tail(queue* q, void* data) {
+void queue_push_tail(queue *q, void *data) {
   assert(q);
-  element_t* e = malloc(sizeof(element_t));
+  element_t *e = malloc(sizeof(element_t));
   assert(e);
   e->data = data;
   e->prev = q->tail;
@@ -67,12 +67,12 @@ void queue_push_tail(queue* q, void* data) {
 
 /* *********************************************************** */
 
-void* queue_pop_head(queue* q) {
+void *queue_pop_head(queue *q) {
   assert(q);
   assert(q->length > 0);
   if (!q->head) return NULL;
-  void* data = q->head->data;
-  element_t* next = q->head->next;
+  void *data = q->head->data;
+  element_t *next = q->head->next;
   if (next) next->prev = NULL;
   free(q->head);
   q->head = next;
@@ -83,12 +83,12 @@ void* queue_pop_head(queue* q) {
 
 /* *********************************************************** */
 
-void* queue_pop_tail(queue* q) {
+void *queue_pop_tail(queue *q) {
   assert(q);
   assert(q->length > 0);
   if (!q->tail) return NULL;
-  void* data = q->tail->data;
-  element_t* prev = q->tail->prev;
+  void *data = q->tail->data;
+  element_t *prev = q->tail->prev;
   if (prev) prev->next = NULL;
   free(q->tail);
   q->tail = prev;
@@ -99,21 +99,21 @@ void* queue_pop_tail(queue* q) {
 
 /* *********************************************************** */
 
-int queue_length(const queue* q) {
+int queue_length(const queue *q) {
   assert(q);
   return q->length;
 }
 
 /* *********************************************************** */
 
-bool queue_is_empty(const queue* q) {
+bool queue_is_empty(const queue *q) {
   assert(q);
   return (q->length == 0);
 }
 
 /* *********************************************************** */
 
-void* queue_peek_head(queue* q) {
+void *queue_peek_head(queue *q) {
   assert(q);
   assert(q->head);
   return q->head->data;
@@ -121,7 +121,7 @@ void* queue_peek_head(queue* q) {
 
 /* *********************************************************** */
 
-void* queue_peek_tail(queue* q) {
+void *queue_peek_tail(queue *q) {
   assert(q);
   assert(q->tail);
   return q->tail->data;
@@ -129,11 +129,11 @@ void* queue_peek_tail(queue* q) {
 
 /* *********************************************************** */
 
-void queue_clear(queue* q) {
+void queue_clear(queue *q) {
   assert(q);
-  element_t* e = q->head;
+  element_t *e = q->head;
   while (e) {
-    element_t* tmp = e;
+    element_t *tmp = e;
     e = e->next;
     free(tmp);
   }
@@ -143,11 +143,11 @@ void queue_clear(queue* q) {
 
 /* *********************************************************** */
 
-void queue_clear_full(queue* q, void (*destroy)(void*)) {
+void queue_clear_full(queue *q, void (*destroy)(void *)) {
   assert(q);
-  element_t* e = q->head;
+  element_t *e = q->head;
   while (e) {
-    element_t* tmp = e;
+    element_t *tmp = e;
     if (destroy) destroy(e->data);
     e = e->next;
     free(tmp);
@@ -158,14 +158,14 @@ void queue_clear_full(queue* q, void (*destroy)(void*)) {
 
 /* *********************************************************** */
 
-void queue_free(queue* q) {
+void queue_free(queue *q) {
   queue_clear(q);
   free(q);
 }
 
 /* *********************************************************** */
 
-void queue_free_full(queue* q, void (*destroy)(void*)) {
+void queue_free_full(queue *q, void (*destroy)(void *)) {
   queue_clear_full(q, destroy);
   free(q);
 }

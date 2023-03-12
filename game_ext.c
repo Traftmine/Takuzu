@@ -19,7 +19,7 @@
 /*                                 GAME EXT                                   */
 /* ************************************************************************** */
 
-game game_new_ext(uint nb_rows, uint nb_cols, square* squares, bool wrapping, bool unique) {
+game game_new_ext(uint nb_rows, uint nb_cols, square *squares, bool wrapping, bool unique) {
   game g = game_new_empty_ext(nb_rows, nb_cols, wrapping, unique);
   assert(g);
   // set squares
@@ -42,7 +42,7 @@ game game_new_empty_ext(uint nb_rows, uint nb_cols, bool wrapping, bool unique) 
   g->nb_cols = nb_cols;
   g->wrapping = wrapping;
   g->unique = unique;
-  g->squares = (square*)calloc(g->nb_rows * g->nb_cols, sizeof(uint));
+  g->squares = (square *)calloc(g->nb_rows * g->nb_cols, sizeof(uint));
   assert(g->squares);
 
   // initialize history

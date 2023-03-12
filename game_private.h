@@ -45,16 +45,16 @@ typedef struct move_s move;
 /* ************************************************************************** */
 
 /** push a move in the stack */
-void _stack_push_move(queue* q, move m);
+void _stack_push_move(queue *q, move m);
 
 /** pop a move from the stack */
-move _stack_pop_move(queue* q);
+move _stack_pop_move(queue *q);
 
 /** test if the stack is empty */
-bool _stack_is_empty(queue* q);
+bool _stack_is_empty(queue *q);
 
 /** clear all the stack */
-void _stack_clear(queue* q);
+void _stack_clear(queue *q);
 
 /* ************************************************************************** */
 /*                                  AUXILIARY                                 */

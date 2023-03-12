@@ -22,12 +22,13 @@
  * @details See description of game extensions on @ref index.
  * @param nb_rows number of rows in game
  * @param nb_cols number of columns in game
- * @param squares an array describing the initial state of each square using row-major storage
+ * @param squares an array describing the initial state of each square using
+ *row-major storage
  * @param wrapping wrapping option
  * @param unique unique option
  * @return the created game
  **/
-game game_new_ext(uint nb_rows, uint nb_cols, square* squares, bool wrapping, bool unique);
+game game_new_ext(uint nb_rows, uint nb_cols, square *squares, bool wrapping, bool unique);
 
 /**
  * @brief Creates a new empty game with extended options.

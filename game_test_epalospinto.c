@@ -25,8 +25,10 @@ int test_dummy(void) { return EXIT_SUCCESS; }
 // TEST PLAY MOVE //
 
 bool test_game_play_move(void) {
-  game g = game_new_empty();        // Playing a move and then checking if the right value is in the game
-  game_play_move(g, 0, 0, S_ZERO);  // We assume that get_square is well programmed
+  game g = game_new_empty();  // Playing a move and then checking if the right
+                              // value is in the game
+  game_play_move(g, 0, 0,
+                 S_ZERO);  // We assume that get_square is well programmed
   game_play_move(g, 0, 1, S_ONE);
   ASSERT(game_get_square(g, 0, 0) == S_ZERO);
   ASSERT(game_get_square(g, 0, 1) == S_ONE);
@@ -53,7 +55,8 @@ bool test_game_has_error(void) {
       ASSERT(game_has_error(g, i, j) == 0);
     }
   }
-  game_set_square(g, 1, 3, S_ONE);  // Changing a square in the solution and rechecking if there's an error
+  game_set_square(g, 1, 3, S_ONE);  // Changing a square in the solution and
+                                    // rechecking if there's an error
   ASSERT(game_has_error(g, 1, 4) != 0 && game_has_error(g, 1, 4) != false);
   ASSERT(game_has_error(g, 1, 3) != 0 && game_has_error(g, 1, 3) != false);
   ASSERT(game_has_error(g, 1, 2) != 0 && game_has_error(g, 1, 2) != false);
@@ -91,7 +94,8 @@ bool test_game_has_error(void) {
 // TEST RESTART //
 
 bool test_game_restart(void) {
-  game g = game_default();  // Creating two games but one had move played then restarted, it they aren't equal then it's false
+  game g = game_default();  // Creating two games but one had move played then
+                            // restarted, it they aren't equal then it's false
   game g_copy = game_copy(g);
   game_play_move(g, 1, 1, S_ZERO);
   game_restart(g);
@@ -112,7 +116,8 @@ bool test_game_restart(void) {
 // TEST IS OVER //
 
 bool test_game_is_over(void) {
-  square s_one[6][6];  // Creating two games, one only with zeros and another with only ones
+  square s_one[6][6];  // Creating two games, one only with zeros and another
+                       // with only ones
   for (int i = 0; i < 6; i++) {
     for (int j = 0; j < 6; j++) {
       s_one[i][j] = S_ONE;
@@ -134,7 +139,8 @@ bool test_game_is_over(void) {
 
   game g_solution = game_default_solution();  // Checking if solution game is over
   ASSERT(game_is_over(g_solution));
-  game_play_move(g_solution, 1, 1, S_ZERO);  // Playing a move and now it mustn't be over because not right
+  game_play_move(g_solution, 1, 1,
+                 S_ZERO);  // Playing a move and now it mustn't be over because not right
   ASSERT(!game_is_over(g_solution));
   game_set_square(g_solution, 1, 1, S_EMPTY);
   game_set_square(g_solution, 5, 1, S_ONE);
@@ -195,7 +201,8 @@ bool test_game_default_solution(void) {
 // TEST CHECK MOVE //
 
 bool test_game_check_move(void) {
-  game g = game_new_empty();  // Setting immutables in a game, we shouldn't be able to play on them
+  game g = game_new_empty();  // Setting immutables in a game, we shouldn't be
+                              // able to play on them
   ASSERT(game_check_move(g, 0, 0, S_IMMUTABLE_ZERO) == false);
   ASSERT(game_check_move(g, 0, 1, S_IMMUTABLE_ONE) == false);
   ASSERT(game_check_move(g, 0, 7, S_ONE) == false);
@@ -207,14 +214,14 @@ bool test_game_check_move(void) {
   return true;
 }
 
-void usage(int argc, char* argv[]) {
+void usage(int argc, char *argv[]) {
   fprintf(stderr, "You need to give one argument");
   exit(EXIT_FAILURE);
 }
 
 /* ********** MAIN ROUTINE ********** */
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
   if (argc == 1) {
     usage(argc, argv);
   }
