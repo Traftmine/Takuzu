@@ -1,18 +1,39 @@
 cmake_minimum_required(VERSION 3.2)
 project(takuzu C)
 
+
+## testing
 include(CTest)
 enable_testing()
 
+## find SDL2
+include(SDL2.cmake)
+message(STATUS "SDL2 include dir: ${SDL2_ALL_INC}")
+message(STATUS "SDL2 all libraries: ${SDL2_ALL_LIBS}")
+
+## compilation flags
 set(CMAKE_C_FLAGS "-std=c99 -g -Wall --coverage")
 link_directories(${CMAKE_SOURCE_DIR})
 
+## executable text interface
 add_library(game game.c game_aux.c game_ext.c queue.c game_tools.c game_private.c)
 add_executable(game_text game_text.c)
 target_link_libraries(game_text game)
+
+## executable solve
 add_executable(game_solve game_solve.c)
 target_link_libraries(game_solve game)
 
+## executable graphic interface
+add_executable(game_sdl game_sdl.c main.c)
+target_link_libraries(game_sdl ${SDL2_ALL_LIBS} m)
+
+## copy useful data files in build dir
+foreach(file "background.png" "one.png" "zero.png" "RobotCrush.ttf")
+  file(COPY ${file} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+endforeach(file)
+
+## tests
 add_executable(game_test_leoroyer game_test_leoroyer.c)
 target_link_libraries(game_test_leoroyer game)
 add_test(test_leoroyer_dummy ./game_test_leoroyer dummy)
