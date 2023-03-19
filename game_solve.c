@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
       fprintf(stderr, "There's no solution\n");
       return EXIT_FAILURE;
     }
-    game g_solved = one_game_solution(g, 0, 0);
+    game g_solved = one_game_solution(g, 0, 0, game_nb_cols(g)/2, game_nb_cols(g)/2);
     game_save(g_solved, argv[3]);
   }
 

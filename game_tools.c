@@ -105,54 +105,69 @@ void game_save(cgame g, char *filename) {
 
 /* ************************************************************************** */
 
-void game_solve_rec(game g, uint i, uint j, uint *counter) {
+void game_solve_rec(game g, uint i, uint j, uint *counter, uint S_ZEROs, uint S_ONEs) {
   if (game_nb_rows(g) <= i) {
     if (game_is_over(g)) {
       (*counter)++;
     }
   } else if (game_nb_cols(g) <= j) {
-    game_solve_rec(g, i + 1, 0, counter);
+    game_solve_rec(g, i + 1, 0, counter, game_nb_cols(g)/2, game_nb_cols(g)/2);
   } else if (game_is_immutable(g, i, j)) {
-    game_solve_rec(g, i, j + 1, counter);
+    if (game_get_number(g,i,j) == 0) {
+      game_solve_rec(g, i, j + 1, counter, S_ZEROs - 1, S_ONEs);
+    } else{
+      game_solve_rec(g, i, j + 1, counter, S_ZEROs, S_ONEs - 1);
+    }
   } else {
-    game_set_square(g, i, j, S_ZERO);
-    game_solve_rec(g, i, j + 1, counter);
-
-    game_set_square(g, i, j, S_ONE);
-    game_solve_rec(g, i, j + 1, counter);
+    if (S_ZEROs > 0 && game_check_move(g, i, j, S_ZERO)) {
+      game_set_square(g, i, j, S_ZERO);
+      game_solve_rec(g, i, j + 1, counter, S_ZEROs - 1, S_ONEs);
+    }
+    if (S_ONEs > 0 && game_check_move(g, i, j, S_ONE))
+    {
+      game_set_square(g, i, j, S_ONE);
+      game_solve_rec(g, i, j + 1, counter, S_ZEROs, S_ONEs - 1);
+    }
   }
 }
 
 /* ************************************************************************** */
 
-game one_game_solution(game g, uint i, uint j) {
+game one_game_solution(game g, uint i, uint j, uint S_ZEROs, uint S_ONEs) {
   if (game_nb_rows(g) <= i) {
     if (game_is_over(g)) {
       return g;
     }
     return NULL;
   } else if (game_nb_cols(g) <= j) {
-    return one_game_solution(g, i + 1, 0);
+    return one_game_solution(g, i + 1, 0, game_nb_cols(g)/2, game_nb_cols(g)/2);
   } else if (game_is_immutable(g, i, j)) {
-    return one_game_solution(g, i, j + 1);
-  } else {
-    game_set_square(g, i, j, S_ZERO);
-    game game_solution = one_game_solution(g, i, j + 1);
-    if (game_solution != NULL) {
-      return game_solution;
+    if (game_get_number(g,i,j) == 0){
+      return one_game_solution(g, i, j + 1, S_ZEROs - 1, S_ONEs);
     }
-    game_set_square(g, i, j, S_ONE);
-    return one_game_solution(g, i, j + 1);
+    return one_game_solution(g, i, j + 1, S_ZEROs, S_ONEs - 1);
+  } else {
+    if (S_ZEROs > 0 && game_check_move(g,i,j,S_ZERO)){
+      game_set_square(g, i, j, S_ZERO);
+      game game_solution = one_game_solution(g, i, j + 1, S_ZEROs - 1, S_ONEs);
+      if (game_solution != NULL) {
+      return game_solution;
+      }
+    }
+    if (S_ONEs > 1 && game_check_move(g,i,j,S_ONE)){
+      game_set_square(g, i, j, S_ONE);
+      return one_game_solution(g, i, j + 1, S_ZEROs, S_ONEs - 1);
+    }
+    return NULL;
   }
-  return NULL;
 }
 
 /* ************************************************************************** */
 
 uint game_nb_solutions(cgame g) {
-  uint i = 0, j = 0, counter = 0;
+  uint i = 0, j = 0, counter = 0, begin = game_nb_cols(g)/2;
   game g_nb_sols = game_copy(g);  // copy the game because it's unchangeable so that I can change it when calling recursive version
-  game_solve_rec(g_nb_sols, i, j, &counter);
+  game_solve_rec(g_nb_sols, i, j, &counter, begin, begin);
   return counter;
 }
 

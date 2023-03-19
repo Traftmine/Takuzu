@@ -60,7 +60,7 @@ uint game_nb_solutions(cgame g);
  * no solution for this game, @p g must be unchanged.
  * @return true if a solution is found, false otherwise
  */
-game one_game_solution(game g, uint i, uint j);
+game one_game_solution(game g, uint i, uint j, uint S_ZEROs, uint S_ONEs);
 
 /**
  * @brief Computes the total number of solutions of a given game.
@@ -71,7 +71,7 @@ game one_game_solution(game g, uint i, uint j);
  * @details The game @p g must be unchanged.
  * @return the number of solutions
  */
-void game_solve_rec(game g, uint i, uint j, uint *counter);
+void game_solve_rec(game g, uint i, uint j, uint *counter, uint S_ZEROs, uint S_ONEs);
 /**
  * @}
  */
