@@ -31,6 +31,8 @@ struct Env_t {
   int grid_cell_size_x;
   int grid_cell_size_y;
   SDL_Color grid_background, grid_line_color;
+  int one_x, one_y;
+  int zero_x, zero_y;
 
 };
 
@@ -39,7 +41,6 @@ struct Env_t {
 Env *init(SDL_Window *win, SDL_Renderer *ren, int argc, char *argv[]) {
   Env *env = malloc(sizeof(struct Env_t));
   env->g = game_default();
-
 
   /* init background texture from PNG image */
   env->background = IMG_LoadTexture(ren, BACKGROUND);
@@ -89,8 +90,8 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env) {
   SDL_GetWindowSize(win, &window_width, &window_height);
 
   /* init grid */
-  int begin_x = 0.2*window_width, begin_y = 0.2*window_height;
-  int end_x = 0.8*window_width, end_y = 0.8*window_height;
+  int begin_x = 0.3*window_width, begin_y = 0.15*window_height;
+  int end_x = 0.7*window_width, end_y = 0.55*window_height;
   env->grid_cell_size_x = (end_x-begin_x)/game_nb_cols(env->g);
   env->grid_cell_size_y = (end_y-begin_y)/game_nb_rows(env->g);
   SDL_Color bg_color = {255, 255, 255, 255};      // white background
@@ -104,12 +105,34 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env) {
 
   /*Draw grid lines*/
   SDL_SetRenderDrawColor(ren, env->grid_line_color.r, env->grid_line_color.g, env->grid_line_color.b, env->grid_line_color.a);
-  for (int x = begin_x; x < end_x; x += env->grid_cell_size_x) {
+  for (int x = begin_x; x <= end_x; x += env->grid_cell_size_x) {
     SDL_RenderDrawLine(ren, x, begin_y, x, end_y);
   }
-
-  for (int y = begin_y; y < end_y; y += env->grid_cell_size_y) {
+  for (int y = begin_y; y <= end_y; y += env->grid_cell_size_y) {
     SDL_RenderDrawLine(ren, begin_x, y, end_x, y);
+  }
+
+  /* Render game */
+  for (int i = 0; i < game_nb_rows(env->g); i++){
+    for (int j = 0; j < game_nb_cols(env->g); j++)
+    {
+      SDL_Rect rect;
+      rect.w = env->grid_cell_size_x;
+      rect.h = env->grid_cell_size_y;
+      rect.x = begin_x + j * env->grid_cell_size_x;
+      rect.y = begin_y + i * env->grid_cell_size_y;
+      switch (game_get_number(env->g,i,j))
+      {
+      case -1:
+        break;
+      case 0:
+        SDL_RenderCopy(ren, env->zero, NULL, &rect);
+        break;
+      case 1:
+        SDL_RenderCopy(ren, env->one, NULL, &rect);
+        break;
+      }
+    }
   }
 }
 
