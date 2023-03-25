@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.2)
 project(takuzu C)
 
-
 ## testing
 include(CTest)
 enable_testing()
@@ -12,7 +11,7 @@ message(STATUS "SDL2 include dir: ${SDL2_ALL_INC}")
 message(STATUS "SDL2 all libraries: ${SDL2_ALL_LIBS}")
 
 ## compilation flags
-set(CMAKE_C_FLAGS "-std=c99 -g -Wall --coverage")
+set(CMAKE_C_FLAGS "-std=c99 -g -Wall")
 link_directories(${CMAKE_SOURCE_DIR})
 
 ## executable text interface
@@ -25,8 +24,9 @@ add_executable(game_solve game_solve.c)
 target_link_libraries(game_solve game)
 
 ## executable graphic interface
+include_directories(${SDL2_ALL_INC})
 add_executable(game_sdl game_sdl.c main.c)
-target_link_libraries(game_sdl ${SDL2_ALL_LIBS} m)
+target_link_libraries(game_sdl game ${SDL2_ALL_LIBS} m)
 
 ## copy useful data files in build dir
 foreach(file "background.png" "one.png" "zero.png" "RobotCrush.ttf")

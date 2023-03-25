@@ -6,6 +6,11 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "game.h"
+
+#include "game_ext.h"
+#include "game_aux.h"
+
 
 /* **************************************************************** */
 
@@ -18,16 +23,24 @@
 /* **************************************************************** */
 
 struct Env_t {
-  SDL_Texture* background;
-  SDL_Texture* one;         // S_ONE logo
-  SDL_Texture* zero;        // S_ZERO logo
   // how to do a grid ?
+  game g;
+  SDL_Texture *background;
+  SDL_Texture *one;   // S_ONE logo
+  SDL_Texture *zero;  // S_ZERO logo
+  SDL_Texture *text;
+  // how to do a grid ?
+  int grid_cell_size;
+  SDL_Color grid_background, grid_line_color;
+
 };
 
 /* **************************************************************** */
 
 Env *init(SDL_Window *win, SDL_Renderer *ren, int argc, char *argv[]) {
   Env *env = malloc(sizeof(struct Env_t));
+  env->g = game_default();
+
 
   /* init background texture from PNG image */
   env->background = IMG_LoadTexture(ren, BACKGROUND);
@@ -42,14 +55,41 @@ Env *init(SDL_Window *win, SDL_Renderer *ren, int argc, char *argv[]) {
   if (!env->zero) ERROR("IMG_LoadTexture: %s\n", ZERO);
 
   /* init text texture using Arial font */
-  SDL_Color color = {0, 0, 0, 0.8}; /* light balck color in RGBA */
-  TTF_Font* font = TTF_OpenFont(FONT, FONTSIZE);
+  SDL_Color color = {0, 0, 0, 1}; /* light balck color in RGBA */
+  TTF_Font *font = TTF_OpenFont(FONT, FONTSIZE);
   if (!font) ERROR("TTF_OpenFont: %s\n", FONT);
   TTF_SetFontStyle(font, TTF_STYLE_BOLD);                                   // TTF_STYLE_ITALIC | TTF_STYLE_NORMAL
-  SDL_Surface* surf = TTF_RenderText_Blended(font, "Takuzu", color);        // blended rendering for ultra nice text
+  SDL_Surface *surf = TTF_RenderText_Blended(font, "Takuzu", color);        // blended rendering for ultra nice text
   env->text = SDL_CreateTextureFromSurface(ren, surf);
   SDL_FreeSurface(surf);
   TTF_CloseFont(font);
+
+  /*get current window size */
+  /*int window_height, window_width;
+  SDL_GetWindowSize(win, &window_width, &window_height);*/
+
+  /* init grid */
+  /*env->grid_cell_size = 100;
+  SDL_Color bg_color = {255, 255, 255, 255};      // white background
+  SDL_Color grid_line_color = {44, 44, 44, 255};  // dark grey lines
+  env->grid_background = bg_color;
+  env->grid_line_color = grid_line_color;*/
+
+  /*Draw grid bck*/
+  /*SDL_SetRenderDrawColor(ren, env->grid_background.r, env->grid_background.g, env->grid_background.b, env->grid_background.a);
+  SDL_RenderClear(ren);*/
+
+  /*Draw grid lines*/
+  /*SDL_SetRenderDrawColor(ren, env->grid_line_color.r, env->grid_line_color.g, env->grid_line_color.b, env->grid_line_color.a);
+
+  for (int x = 0; x < 1 + game_nb_cols(env->g) * env->grid_cell_size; x += env->grid_cell_size) {
+    SDL_RenderDrawLine(ren, x, 0, x, window_height);
+  }
+
+  for (int y = 0; y < 1 + game_nb_rows(env->g) * env->grid_cell_size; y += env->grid_cell_size) {
+    SDL_RenderDrawLine(ren, 0, y, window_width, y);
+  }*/
+
 
   return env;
 }
@@ -71,6 +111,32 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env) {
   rect.x = w / 2 - rect.w / 2;
   rect.y = h / 2 - rect.h / 2;
   SDL_RenderCopy(ren, env->text, NULL, &rect);
+
+    /*get current window size */
+  int window_height, window_width;
+  SDL_GetWindowSize(win, &window_width, &window_height);
+
+  /* init grid */
+  env->grid_cell_size = 100;
+  SDL_Color bg_color = {255, 255, 255, 255};      // white background
+  SDL_Color grid_line_color = {44, 44, 44, 255};  // dark grey lines
+  env->grid_background = bg_color;
+  env->grid_line_color = grid_line_color;
+
+  /*Draw grid bck*/
+  SDL_SetRenderDrawColor(ren, env->grid_background.r, env->grid_background.g, env->grid_background.b, env->grid_background.a);
+  SDL_RenderClear(ren);
+
+  /*Draw grid lines*/
+  SDL_SetRenderDrawColor(ren, env->grid_line_color.r, env->grid_line_color.g, env->grid_line_color.b, env->grid_line_color.a);
+
+  for (int x = 0; x < 1 + game_nb_cols(env->g) * env->grid_cell_size; x += env->grid_cell_size) {
+    SDL_RenderDrawLine(ren, x, 0, x, window_height);
+  }
+
+  for (int y = 0; y < 1 + game_nb_rows(env->g) * env->grid_cell_size; y += env->grid_cell_size) {
+    SDL_RenderDrawLine(ren, 0, y, window_width, y);
+  }
 }
 
 /* **************************************************************** */

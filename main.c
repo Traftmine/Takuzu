@@ -1,11 +1,9 @@
-// SDL2 Demo by aurelien.esnard@u-bordeaux.fr
-
 #include <SDL.h>
 #include <SDL_image.h>  // required to load transparent texture from PNG
 #include <SDL_ttf.h>    // required to use TTF fonts
 #include <stdbool.h>
 #include <stdio.h>
-#include "model.h"
+#include "game_sdl.h"
 
 /* **************************************************************** */
 
