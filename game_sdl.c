@@ -23,14 +23,13 @@
 /* **************************************************************** */
 
 struct Env_t {
-  // how to do a grid ?
   game g;
   SDL_Texture *background;
   SDL_Texture *one;   // S_ONE logo
   SDL_Texture *zero;  // S_ZERO logo
   SDL_Texture *text;
-  // how to do a grid ?
-  int grid_cell_size;
+  int grid_cell_size_x;
+  int grid_cell_size_y;
   SDL_Color grid_background, grid_line_color;
 
 };
@@ -63,41 +62,14 @@ Env *init(SDL_Window *win, SDL_Renderer *ren, int argc, char *argv[]) {
   env->text = SDL_CreateTextureFromSurface(ren, surf);
   SDL_FreeSurface(surf);
   TTF_CloseFont(font);
-
-  /*get current window size */
-  /*int window_height, window_width;
-  SDL_GetWindowSize(win, &window_width, &window_height);*/
-
-  /* init grid */
-  /*env->grid_cell_size = 100;
-  SDL_Color bg_color = {255, 255, 255, 255};      // white background
-  SDL_Color grid_line_color = {44, 44, 44, 255};  // dark grey lines
-  env->grid_background = bg_color;
-  env->grid_line_color = grid_line_color;*/
-
-  /*Draw grid bck*/
-  /*SDL_SetRenderDrawColor(ren, env->grid_background.r, env->grid_background.g, env->grid_background.b, env->grid_background.a);
-  SDL_RenderClear(ren);*/
-
-  /*Draw grid lines*/
-  /*SDL_SetRenderDrawColor(ren, env->grid_line_color.r, env->grid_line_color.g, env->grid_line_color.b, env->grid_line_color.a);
-
-  for (int x = 0; x < 1 + game_nb_cols(env->g) * env->grid_cell_size; x += env->grid_cell_size) {
-    SDL_RenderDrawLine(ren, x, 0, x, window_height);
-  }
-
-  for (int y = 0; y < 1 + game_nb_rows(env->g) * env->grid_cell_size; y += env->grid_cell_size) {
-    SDL_RenderDrawLine(ren, 0, y, window_width, y);
-  }*/
-
-
   return env;
 }
 
 /* **************************************************************** */
 
 void render(SDL_Window *win, SDL_Renderer *ren, Env *env) {
-    SDL_Rect rect;
+
+  SDL_Rect rect;
 
   /* get current window size */
   int w, h;
@@ -112,12 +84,15 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env) {
   rect.y = h / 2 - rect.h / 2;
   SDL_RenderCopy(ren, env->text, NULL, &rect);
 
-    /*get current window size */
+  /*get current window size */
   int window_height, window_width;
   SDL_GetWindowSize(win, &window_width, &window_height);
 
   /* init grid */
-  env->grid_cell_size = 100;
+  int begin_x = 0.2*window_width, begin_y = 0.2*window_height;
+  int end_x = 0.8*window_width, end_y = 0.8*window_height;
+  env->grid_cell_size_x = (end_x-begin_x)/game_nb_cols(env->g);
+  env->grid_cell_size_y = (end_y-begin_y)/game_nb_rows(env->g);
   SDL_Color bg_color = {255, 255, 255, 255};      // white background
   SDL_Color grid_line_color = {44, 44, 44, 255};  // dark grey lines
   env->grid_background = bg_color;
@@ -129,13 +104,12 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env) {
 
   /*Draw grid lines*/
   SDL_SetRenderDrawColor(ren, env->grid_line_color.r, env->grid_line_color.g, env->grid_line_color.b, env->grid_line_color.a);
-
-  for (int x = 0; x < 1 + game_nb_cols(env->g) * env->grid_cell_size; x += env->grid_cell_size) {
-    SDL_RenderDrawLine(ren, x, 0, x, window_height);
+  for (int x = begin_x; x < end_x; x += env->grid_cell_size_x) {
+    SDL_RenderDrawLine(ren, x, begin_y, x, end_y);
   }
 
-  for (int y = 0; y < 1 + game_nb_rows(env->g) * env->grid_cell_size; y += env->grid_cell_size) {
-    SDL_RenderDrawLine(ren, 0, y, window_width, y);
+  for (int y = begin_y; y < end_y; y += env->grid_cell_size_y) {
+    SDL_RenderDrawLine(ren, begin_x, y, end_x, y);
   }
 }
 
@@ -147,7 +121,7 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
   }
 
   /* PUT YOUR CODE HERE TO PROCESS EVENTS */
-    int w, h;
+  int w, h;
   SDL_GetWindowSize(win, &w, &h);
 
   /* generic events */
