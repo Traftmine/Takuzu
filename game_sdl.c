@@ -61,6 +61,7 @@ Env *init(SDL_Window *win, SDL_Renderer *ren, int argc, char *argv[]) {
   env->text = SDL_CreateTextureFromSurface(ren, surf);
   SDL_FreeSurface(surf);
   TTF_CloseFont(font);
+
   return env;
 }
 
@@ -138,7 +139,6 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
     return true;
   }
 
-  /* PUT YOUR CODE HERE TO PROCESS EVENTS */
   int w, h;
   SDL_GetWindowSize(win, &w, &h);
 
@@ -148,6 +148,7 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
   }
   /* Android events */
 #ifdef __ANDROID__
+  // no need to code it for the computer version
   else if (e->type == SDL_FINGERDOWN) {
     env->mario_x = e->tfinger.x * w; /* tfinger.x, normalized in [0..1] */
     env->mario_y = e->tfinger.y * h; /* tfinger.y, normalized in [0..1] */
@@ -155,10 +156,44 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
   /* other events */
 #else
   else if (e->type == SDL_MOUSEBUTTONDOWN) {
-    SDL_Point mouse;
-    SDL_GetMouseState(&mouse.x, &mouse.y);
-    env->one = mouse.x;
-    env->one = mouse.y;
+    int x, y;
+    SDL_GetMouseState(&x, &y);
+    int row = (y - 0.15 * h) / env->grid_cell_size_y;
+    int col = (x - 0.3 * w) / env->grid_cell_size_x;
+    if (row >= 0 && row < game_nb_rows(env->g) && col >= 0 && col < game_nb_cols(env->g) && !game_is_immutable(env->g, row, col)) {
+      if (game_get_square(env->g, row, col) == S_ONE) {  // 1 -> 0 -> Empty -> 1
+        game_play_move(env->g, row, col, S_ZERO);
+      } else if (game_get_square(env->g, row, col) == S_ZERO) {
+        game_play_move(env->g, row, col, S_EMPTY);
+      } else {
+        game_play_move(env->g, row, col, S_ONE);
+      }
+    }
+  } else if (e->type == SDL_KEYDOWN) {
+    switch (e->key.keysym.sym) {
+      case SDLK_u:
+        game_undo(env->g);
+        break;
+      case SDLK_r:
+        game_redo(env->g);
+        break;
+      case SDLK_s:
+        game_restart(env->g);
+        break;
+      case SDLK_c:
+        if (game_is_over(env->g)) {
+          // display victory
+        } else {
+          // display try again
+        }
+        break;
+      case SDLK_o:
+        // change the window to a new one
+        break;
+      case SDLK_q:
+        return true;
+        break;
+    }
   }
 #endif
 
