@@ -10,14 +10,20 @@
 
 int main(int argc, char *argv[]) {
   if (argc != 4) {
-    printf("Error: please respect this following syntax: $ ./game_solve <option> <input> [<output>] \n");
+    printf(
+        "Error: please respect this following syntax: $ ./game_solve "
+        "<option> <input> [<output>] \n");
     printf("The output is optional\n");
     return EXIT_FAILURE;
   }
 
   if (strcmp("-c", argv[1]) != 0 && strcmp("-s", argv[1]) != 0) {
-    printf("Error: second argument <option> should be '-c' if you wish to know the number of existing soltuions to your game \n");
-    printf("OR '-s' if you wish to search and save the first solution found to your game in your file given as a 4th argument \n");
+    printf(
+        "Error: second argument <option> should be '-c' if you wish to know "
+        "the number of existing soltuions to your game \n");
+    printf(
+        "OR '-s' if you wish to search and save the first solution found to "
+        "your game in your file given as a 4th argument \n");
     return EXIT_FAILURE;
   }
 
@@ -28,7 +34,7 @@ int main(int argc, char *argv[]) {
       fprintf(stderr, "There's no solution\n");
       return EXIT_FAILURE;
     }
-    game g_solved = one_game_solution(g, 0, 0, game_nb_cols(g)/2, game_nb_cols(g)/2);
+    game g_solved = one_game_solution(g, 0, 0, game_nb_cols(g) / 2, game_nb_cols(g) / 2);
     game_save(g_solved, argv[3]);
   }
 
