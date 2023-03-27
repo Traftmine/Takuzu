@@ -119,14 +119,31 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env) {
       rect.h = env->grid_cell_size_y;
       rect.x = begin_x + j * env->grid_cell_size_x;
       rect.y = begin_y + i * env->grid_cell_size_y;
+
       switch (game_get_number(env->g, i, j)) {
         case -1:
           break;
         case 0:
-          SDL_RenderCopy(ren, env->zero, NULL, &rect);
+          if (game_has_error(env->g, i, j)) {
+            // Set the drawing color to red
+            SDL_SetRenderDrawColor(ren, 255, 153, 153, 255);
+            // Fill the rectangle with the current drawing color
+            SDL_RenderFillRect(ren, &rect);
+            SDL_RenderCopy(ren, env->zero, NULL, &rect);
+          } else {
+            SDL_RenderCopy(ren, env->zero, NULL, &rect);
+          }
           break;
         case 1:
-          SDL_RenderCopy(ren, env->one, NULL, &rect);
+          if (game_has_error(env->g, i, j)) {
+            // Set the drawing color to red
+            SDL_SetRenderDrawColor(ren, 255, 153, 153, 255);
+            // Fill the rectangle with the current drawing color
+            SDL_RenderFillRect(ren, &rect);
+            SDL_RenderCopy(ren, env->one, NULL, &rect);
+          } else {
+            SDL_RenderCopy(ren, env->one, NULL, &rect);
+          }
           break;
       }
     }
