@@ -10,6 +10,7 @@
 #include "game.h"
 #include "game_aux.h"
 #include "game_ext.h"
+#include "game_tools.h"
 
 /* **************************************************************** */
 
@@ -233,7 +234,7 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
         TTF_Font *font = TTF_OpenFont(FONT, FONTSIZE);
         SDL_Color color = {255, 255, 255};
         const char *text =
-            "> p to restart\n> u to undo your move\n> r to redo your move\n> c to check if victory\n> q or echap to quit\n> s to solve\n> w to save\n> l to "
+            "> p to restart\n> u to undo your move\n> r to redo your move\n> c to check if victory\n> q to quit\n> s to solve\n> w to save\n> l to "
             "load";
         int maxWidth = w * 0.80;  // maximum width for each line
         SDL_Surface *text_surface = TTF_RenderText_Blended_Wrapped(font, text, color, maxWidth);
@@ -254,6 +255,10 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
         SDL_FreeSurface(text_surface);
         TTF_CloseFont(font);
         SDL_DestroyTexture(text_texture);
+        break;
+      case SDLK_s:
+        env->g = game_default_solution();
+        break;
       case SDLK_q:
         return true;
         break;
