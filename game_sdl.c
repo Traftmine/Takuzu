@@ -177,7 +177,7 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
       case SDLK_r:
         game_redo(env->g);
         break;
-      case SDLK_s:
+      case SDLK_p:
         game_restart(env->g);
         break;
       case SDLK_c:
@@ -227,6 +227,33 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
       case SDLK_o:
         // change the window to a new one
         break;
+      case SDLK_h:
+        // display help
+        TTF_Init();
+        TTF_Font *font = TTF_OpenFont(FONT, FONTSIZE);
+        SDL_Color color = {255, 255, 255};
+        const char *text =
+            "> p to restart\n> u to undo your move\n> r to redo your move\n> c to check if victory\n> q or echap to quit\n> s to solve\n> w to save\n> l to "
+            "load";
+        int maxWidth = w * 0.80;  // maximum width for each line
+        SDL_Surface *text_surface = TTF_RenderText_Blended_Wrapped(font, text, color, maxWidth);
+        SDL_Texture *text_texture = SDL_CreateTextureFromSurface(ren, text_surface);
+        int x = (w - text_surface->w) / 2, y = (h - text_surface->h) / 3;
+        SDL_Rect text_rect = {x, y, text_surface->w, text_surface->h};
+        SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
+        int alpha = 255;
+        for (int i = 0; i < 50; i++) {  // fade out over 50 frames
+          SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
+          SDL_RenderClear(ren);
+          SDL_SetTextureAlphaMod(text_texture, alpha);
+          SDL_RenderCopy(ren, text_texture, NULL, &text_rect);
+          SDL_RenderPresent(ren);
+          SDL_Delay(150);  // delay for smoother animation
+          alpha -= 5;      // decrease alpha by 5 each iteration
+        }
+        SDL_FreeSurface(text_surface);
+        TTF_CloseFont(font);
+        SDL_DestroyTexture(text_texture);
       case SDLK_q:
         return true;
         break;
