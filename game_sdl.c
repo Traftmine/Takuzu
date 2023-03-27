@@ -183,8 +183,45 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
       case SDLK_c:
         if (game_is_over(env->g)) {
           // display victory
+          TTF_Init();
+          TTF_Font *font = TTF_OpenFont(FONT, FONTSIZE);
+          SDL_Color color = {255, 255, 255};
+          SDL_Surface *text_surface = TTF_RenderText_Solid(font, "VICTORY", color);
+          SDL_Texture *text_texture = SDL_CreateTextureFromSurface(ren, text_surface);
+          int x = (w - text_surface->w) / 2, y = (h - text_surface->h) / 3;
+          SDL_Rect text_rect = {x, y, text_surface->w, text_surface->h};
+          SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
+          SDL_RenderClear(ren);
+          SDL_RenderCopy(ren, text_texture, NULL, &text_rect);
+          SDL_RenderPresent(ren);
+          SDL_Delay(500);
+          SDL_FreeSurface(text_surface);
+          TTF_CloseFont(font);
+          SDL_DestroyTexture(text_texture);
+          SDL_Delay(50);
         } else {
-          // display try again
+          // display try again and fade away text
+          TTF_Init();
+          TTF_Font *font = TTF_OpenFont(FONT, FONTSIZE);
+          SDL_Color color = {255, 255, 255};
+          SDL_Surface *text_surface = TTF_RenderText_Solid(font, "TRY AGAIN", color);
+          SDL_Texture *text_texture = SDL_CreateTextureFromSurface(ren, text_surface);
+          int x = (w - text_surface->w) / 2, y = (h - text_surface->h) / 3;
+          SDL_Rect text_rect = {x, y, text_surface->w, text_surface->h};
+          SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
+          int alpha = 255;
+          for (int i = 0; i < 50; i++) {  // fade out over 50 frames
+            SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
+            SDL_RenderClear(ren);
+            SDL_SetTextureAlphaMod(text_texture, alpha);
+            SDL_RenderCopy(ren, text_texture, NULL, &text_rect);
+            SDL_RenderPresent(ren);
+            SDL_Delay(50);  // delay for smoother animation
+            alpha -= 5;     // decrease alpha by 5 each iteration
+          }
+          SDL_FreeSurface(text_surface);
+          TTF_CloseFont(font);
+          SDL_DestroyTexture(text_texture);
         }
         break;
       case SDLK_o:
