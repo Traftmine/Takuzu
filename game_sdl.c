@@ -33,6 +33,8 @@ struct Env_t {
   SDL_Color grid_background, grid_line_color;
   int one_x, one_y;
   int zero_x, zero_y;
+  int grid_rows, grid_cols;
+  int unique, wrapping;
 };
 
 /* **************************************************************** */
@@ -40,6 +42,14 @@ struct Env_t {
 Env *init(SDL_Window *win, SDL_Renderer *ren, int argc, char *argv[]) {
   Env *env = malloc(sizeof(struct Env_t));
   env->g = game_default();
+
+  /* init rows and cols*/
+  env->grid_rows = game_nb_rows(env->g);
+  env->grid_cols = game_nb_cols(env->g);
+
+  /* init unique and wrapping */
+  env->unique = game_is_unique(env->g);
+  env->wrapping = game_is_wrapping(env->g);
 
   /* init background texture from PNG image */
   env->background = IMG_LoadTexture(ren, BACKGROUND);
@@ -275,6 +285,21 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
         break;
       case SDLK_s:
         env->g = game_default_solution();
+        break;
+      case SDLK_w:
+        // display save
+        SDL_SetRenderDrawColor(ren, 50, 205, 50, 255);  // light green color
+        SDL_RenderClear(ren);
+        TTF_Font *font_save = TTF_OpenFont(FONT, FONTSIZE);
+        SDL_Color color_save = {255, 255, 255};  // white color
+        SDL_Surface *text_surface_save = TTF_RenderText_Solid(font_save, "saved as game_saved.txt", color_save);
+        SDL_Texture *text_texture_save = SDL_CreateTextureFromSurface(ren, text_surface_save);
+        int x_save = (w - text_surface_save->w) / 2, y_save = (h - text_surface_save->h) / 3;
+        SDL_Rect text_rect_save = {x_save, y_save, text_surface_save->w, text_surface_save->h};
+        SDL_RenderCopy(ren, text_texture_save, NULL, &text_rect_save);
+        SDL_RenderPresent(ren);
+        SDL_Delay(1000);
+        game_save(env->g, "game_saved.txt");
         break;
       case SDLK_q:
         return true;
