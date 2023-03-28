@@ -170,6 +170,8 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
   int w, h;
   SDL_GetWindowSize(win, &w, &h);
 
+  SDL_Window* window_option = NULL;
+
   /* generic events */
   if (e->type == SDL_QUIT) {
     return true;
@@ -213,7 +215,7 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
           // display victory
           TTF_Init();
           TTF_Font *font = TTF_OpenFont(FONT, FONTSIZE);
-          SDL_Color color = {255, 255, 255};
+          SDL_Color color = {0, 255, 0};
           SDL_Surface *text_surface = TTF_RenderText_Solid(font, "VICTORY", color);
           SDL_Texture *text_texture = SDL_CreateTextureFromSurface(ren, text_surface);
           int x = (w - text_surface->w) / 2, y = (h - text_surface->h) / 3;
@@ -231,7 +233,7 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
           // display try again and fade away text
           TTF_Init();
           TTF_Font *font = TTF_OpenFont(FONT, FONTSIZE);
-          SDL_Color color = {255, 255, 255};
+          SDL_Color color = {255, 0, 0};
           SDL_Surface *text_surface = TTF_RenderText_Solid(font, "TRY AGAIN", color);
           SDL_Texture *text_texture = SDL_CreateTextureFromSurface(ren, text_surface);
           int x = (w - text_surface->w) / 2, y = (h - text_surface->h) / 3;
@@ -253,7 +255,109 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
         }
         break;
       case SDLK_o:
-        // change the window to a new one
+        // Change the window to a new one
+        window_option = SDL_CreateWindow("Options", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 600, 600, SDL_WINDOW_SHOWN);
+        if (window_option == NULL) {
+          SDL_Log("Erreur lors de la création de la fenêtre : %s", SDL_GetError());
+          return 1;
+        }
+        SDL_Renderer* renderer_option = SDL_CreateRenderer(window_option, -1, SDL_RENDERER_ACCELERATED);
+        if (renderer_option == NULL) {
+          SDL_Log("Erreur lors de la création du renderer : %s", SDL_GetError());
+          return 1;
+        }
+
+        // Define the switch button rectangle
+        SDL_Rect switch_rect1 = { 100, 100, 100, 20 };
+        SDL_Rect switch_rect2 = { 100, 200, 100, 20 };
+        SDL_Rect switch_rect3 = { 100, 300, 100, 20 };
+        SDL_Rect switch_rect4 = { 100, 400, 100, 20 };
+        int switch_state1 = 0; // default to off / false state
+        int switch_state2 = 0;
+        int switch_state3 = 0;
+        int switch_state4 = 0;
+
+        while (1) {
+          SDL_Event event_option;
+          while (SDL_PollEvent(&event_option)) {
+            if (event_option.type == SDL_QUIT) {
+              SDL_DestroyRenderer(renderer_option);
+              SDL_DestroyWindow(window_option);
+              return 0;
+            }
+            if (event_option.type == SDL_KEYDOWN && event_option.key.keysym.sym == SDLK_q) {
+              SDL_DestroyRenderer(renderer_option);
+              SDL_DestroyWindow(window_option);
+              return 0;
+            }
+            if (event_option.type == SDL_MOUSEBUTTONUP && event_option.button.button == SDL_BUTTON_LEFT) {
+              // check if the mouse click is inside a switch button
+              int mouse_x = event_option.button.x;
+              int mouse_y = event_option.button.y;
+              if (mouse_x >= switch_rect1.x && mouse_x <= switch_rect1.x + switch_rect1.w &&
+                  mouse_y >= switch_rect1.y && mouse_y <= switch_rect1.y + switch_rect1.h) {
+                switch_state1 = !switch_state1; // toggle the switch state
+                env->unique = switch_state1;
+                env->g = game_new_empty_ext(env->grid_rows,env->grid_cols,env->wrapping,env->unique);
+              }
+              if (mouse_x >= switch_rect2.x && mouse_x <= switch_rect2.x + switch_rect2.w &&
+                  mouse_y >= switch_rect2.y && mouse_y <= switch_rect2.y + switch_rect2.h) {
+                switch_state2 = !switch_state2;
+                env->wrapping = switch_state2;
+                env->g = game_new_empty_ext(env->grid_rows,env->grid_cols,env->wrapping,env->unique);
+              }
+              if (mouse_x >= switch_rect3.x && mouse_x <= switch_rect3.x + switch_rect3.w &&
+                  mouse_y >= switch_rect3.y && mouse_y <= switch_rect3.y + switch_rect3.h) {
+                switch_state3 = !switch_state3;
+              }
+              if (mouse_x >= switch_rect4.x && mouse_x <= switch_rect4.x + switch_rect4.w &&
+                  mouse_y >= switch_rect4.y && mouse_y <= switch_rect4.y + switch_rect4.h) {
+                switch_state4 = !switch_state4;
+              }
+            }
+          }
+          // Set the background color to white
+          SDL_SetRenderDrawColor(renderer_option, 255, 255, 255, 255);
+          // Clear the renderer with the current draw color
+          SDL_RenderClear(renderer_option);
+
+          // Draw the switch button
+
+          // Button Wrapping
+          if (switch_state1) {
+            SDL_SetRenderDrawColor(renderer_option,26, 166, 196, 1); // blue color for on state
+          } else {
+            SDL_SetRenderDrawColor(renderer_option, 0, 0, 0, 1); // black color for off state
+          }
+          SDL_RenderFillRect(renderer_option, &switch_rect1);
+
+          // Button Unique
+          if (switch_state2) {
+            SDL_SetRenderDrawColor(renderer_option,26, 166, 196, 1); // blue color for on state
+          } else {
+            SDL_SetRenderDrawColor(renderer_option, 0, 0, 0, 1); // black color for off state
+          }
+          SDL_RenderFillRect(renderer_option, &switch_rect2);
+
+          // Button Cols
+          if (switch_state3) {
+            SDL_SetRenderDrawColor(renderer_option,26, 166, 196, 1); // blue color for on state
+          } else {
+            SDL_SetRenderDrawColor(renderer_option, 0, 0, 0, 1); // black color for off state
+          }
+          SDL_RenderFillRect(renderer_option, &switch_rect3);
+
+          // Button Cols
+          if (switch_state4) {
+            SDL_SetRenderDrawColor(renderer_option,26, 166, 196, 1); // blue color for on state
+          } else {
+            SDL_SetRenderDrawColor(renderer_option, 0, 0, 0, 1); // black color for off state
+          }
+          SDL_RenderFillRect(renderer_option, &switch_rect4);
+
+          // Update the window with the renderer
+          SDL_RenderPresent(renderer_option);
+        }
         break;
       case SDLK_h:
         // display help
