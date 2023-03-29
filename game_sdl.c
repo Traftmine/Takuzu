@@ -170,7 +170,7 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
   int w, h;
   SDL_GetWindowSize(win, &w, &h);
 
-  SDL_Window* window_option = NULL;
+  SDL_Window *window_option = NULL;
 
   /* generic events */
   if (e->type == SDL_QUIT) {
@@ -261,21 +261,35 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
           SDL_Log("Erreur lors de la création de la fenêtre : %s", SDL_GetError());
           return 1;
         }
-        SDL_Renderer* renderer_option = SDL_CreateRenderer(window_option, -1, SDL_RENDERER_ACCELERATED);
+        SDL_Renderer *renderer_option = SDL_CreateRenderer(window_option, -1, SDL_RENDERER_ACCELERATED);
         if (renderer_option == NULL) {
           SDL_Log("Erreur lors de la création du renderer : %s", SDL_GetError());
           return 1;
         }
 
         // Define the switch button rectangle
-        SDL_Rect switch_rect1 = { 100, 100, 100, 20 };
-        SDL_Rect switch_rect2 = { 100, 200, 100, 20 };
-        SDL_Rect switch_rect3 = { 100, 300, 100, 20 };
-        SDL_Rect switch_rect4 = { 100, 400, 100, 20 };
-        int switch_state1 = 0; // default to off / false state
+        SDL_Rect switch_rect1 = {475, 100, 50, 20};
+        SDL_Rect switch_rect2 = {475, 200, 50, 20};
+        // Cols
+        SDL_Rect switch_rect2_Cols = {75, 300, 50, 20};
+        SDL_Rect switch_rect4_Cols = {175, 300, 50, 20};
+        SDL_Rect switch_rect6_Cols = {275, 300, 50, 20};
+        SDL_Rect switch_rect8_Cols = {375, 300, 50, 20};
+        SDL_Rect switch_rect10_Cols = {475, 300, 50, 20};
+        // Rows
+        SDL_Rect switch_rect2_Rows = {75, 400, 50, 20};
+        SDL_Rect switch_rect4_Rows = {175, 400, 50, 20};
+        SDL_Rect switch_rect6_Rows = {275, 400, 50, 20};
+        SDL_Rect switch_rect8_Rows = {375, 400, 50, 20};
+        SDL_Rect switch_rect10_Rows = {475, 400, 50, 20};
+        // Default game button
+        SDL_Rect Default_game = {275, 500, 50, 20};
+        // Button state
+        int switch_state1 = 0;  // default to off / false state
         int switch_state2 = 0;
-        int switch_state3 = 0;
-        int switch_state4 = 0;
+        int switch_state_default_game = 0;
+        int switch_state2_Cols = 0, switch_state4_Cols = 0, switch_state6_Cols = 0, switch_state8_Cols = 0, switch_state10_Cols = 0;
+        int switch_state2_Rows = 0, switch_state4_Rows = 0, switch_state6_Rows = 0, switch_state8_Rows = 0, switch_state10_Rows = 0;
 
         while (1) {
           SDL_Event event_option;
@@ -294,25 +308,95 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
               // check if the mouse click is inside a switch button
               int mouse_x = event_option.button.x;
               int mouse_y = event_option.button.y;
-              if (mouse_x >= switch_rect1.x && mouse_x <= switch_rect1.x + switch_rect1.w &&
-                  mouse_y >= switch_rect1.y && mouse_y <= switch_rect1.y + switch_rect1.h) {
-                switch_state1 = !switch_state1; // toggle the switch state
+              if (mouse_x >= switch_rect1.x && mouse_x <= switch_rect1.x + switch_rect1.w && mouse_y >= switch_rect1.y &&
+                  mouse_y <= switch_rect1.y + switch_rect1.h) {
+                switch_state1 = !switch_state1;  // toggle the switch state
                 env->unique = switch_state1;
-                env->g = game_new_empty_ext(env->grid_rows,env->grid_cols,env->wrapping,env->unique);
+                env->g = game_new_empty_ext(env->grid_rows, env->grid_cols, env->wrapping, env->unique);
               }
-              if (mouse_x >= switch_rect2.x && mouse_x <= switch_rect2.x + switch_rect2.w &&
-                  mouse_y >= switch_rect2.y && mouse_y <= switch_rect2.y + switch_rect2.h) {
+              if (mouse_x >= switch_rect2.x && mouse_x <= switch_rect2.x + switch_rect2.w && mouse_y >= switch_rect2.y &&
+                  mouse_y <= switch_rect2.y + switch_rect2.h) {
                 switch_state2 = !switch_state2;
                 env->wrapping = switch_state2;
-                env->g = game_new_empty_ext(env->grid_rows,env->grid_cols,env->wrapping,env->unique);
+                env->g = game_new_empty_ext(env->grid_rows, env->grid_cols, env->wrapping, env->unique);
               }
-              if (mouse_x >= switch_rect3.x && mouse_x <= switch_rect3.x + switch_rect3.w &&
-                  mouse_y >= switch_rect3.y && mouse_y <= switch_rect3.y + switch_rect3.h) {
-                switch_state3 = !switch_state3;
+              // Default game button
+              if (mouse_x >= Default_game.x && mouse_x <= Default_game.x + Default_game.w && mouse_y >= Default_game.y &&
+                  mouse_y <= Default_game.y + Default_game.h) {
+                switch_state_default_game = !switch_state_default_game;
+                env->g = game_default();
               }
-              if (mouse_x >= switch_rect4.x && mouse_x <= switch_rect4.x + switch_rect4.w &&
-                  mouse_y >= switch_rect4.y && mouse_y <= switch_rect4.y + switch_rect4.h) {
-                switch_state4 = !switch_state4;
+              // Button Cols
+              if (mouse_x >= switch_rect2_Cols.x && mouse_x <= switch_rect2_Cols.x + switch_rect2_Cols.w && mouse_y >= switch_rect2_Cols.y &&
+                  mouse_y <= switch_rect2_Cols.y + switch_rect2_Cols.h) {
+                env->grid_cols = 2;  // setting col size
+                switch_state2_Cols = !switch_state2_Cols;
+                switch_state4_Cols = 0, switch_state6_Cols = 0, switch_state8_Cols = 0, switch_state10_Cols = 0;
+                env->g = game_new_empty_ext(env->grid_rows, env->grid_cols, env->wrapping, env->unique);
+              }
+              if (mouse_x >= switch_rect4_Cols.x && mouse_x <= switch_rect4_Cols.x + switch_rect4_Cols.w && mouse_y >= switch_rect4_Cols.y &&
+                  mouse_y <= switch_rect4_Cols.y + switch_rect4_Cols.h) {
+                env->grid_cols = 4;  // setting col size
+                switch_state4_Cols = !switch_state4_Cols;
+                switch_state2_Cols = 0, switch_state6_Cols = 0, switch_state8_Cols = 0, switch_state10_Cols = 0;
+                env->g = game_new_empty_ext(env->grid_rows, env->grid_cols, env->wrapping, env->unique);
+              }
+              if (mouse_x >= switch_rect6_Cols.x && mouse_x <= switch_rect6_Cols.x + switch_rect6_Cols.w && mouse_y >= switch_rect6_Cols.y &&
+                  mouse_y <= switch_rect6_Cols.y + switch_rect6_Cols.h) {
+                env->grid_cols = 6;  // setting col size
+                switch_state6_Cols = !switch_state6_Cols;
+                switch_state2_Cols = 0, switch_state4_Cols = 0, switch_state8_Cols = 0, switch_state10_Cols = 0;
+                env->g = game_new_empty_ext(env->grid_rows, env->grid_cols, env->wrapping, env->unique);
+              }
+              if (mouse_x >= switch_rect8_Cols.x && mouse_x <= switch_rect8_Cols.x + switch_rect8_Cols.w && mouse_y >= switch_rect8_Cols.y &&
+                  mouse_y <= switch_rect8_Cols.y + switch_rect8_Cols.h) {
+                env->grid_cols = 8;  // setting col size
+                switch_state8_Cols = !switch_state8_Cols;
+                switch_state2_Cols = 0, switch_state4_Cols = 0, switch_state6_Cols = 0, switch_state10_Cols = 0;
+                env->g = game_new_empty_ext(env->grid_rows, env->grid_cols, env->wrapping, env->unique);
+              }
+              if (mouse_x >= switch_rect10_Cols.x && mouse_x <= switch_rect10_Cols.x + switch_rect10_Cols.w && mouse_y >= switch_rect10_Cols.y &&
+                  mouse_y <= switch_rect10_Cols.y + switch_rect10_Cols.h) {
+                env->grid_cols = 10;  // setting col size
+                switch_state10_Cols = !switch_state10_Cols;
+                switch_state2_Cols = 0, switch_state4_Cols = 0, switch_state6_Cols = 0, switch_state8_Cols = 0;
+                env->g = game_new_empty_ext(env->grid_rows, env->grid_cols, env->wrapping, env->unique);
+              }
+              // Button Rows
+              if (mouse_x >= switch_rect2_Rows.x && mouse_x <= switch_rect2_Rows.x + switch_rect2_Rows.w && mouse_y >= switch_rect2_Rows.y &&
+                  mouse_y <= switch_rect2_Rows.y + switch_rect2_Rows.h) {
+                switch_state2_Rows = !switch_state2_Rows;
+                switch_state4_Rows = 0, switch_state6_Rows = 0, switch_state8_Rows = 0, switch_state10_Rows = 0;
+                env->grid_rows = 2;  // setting col size
+                env->g = game_new_empty_ext(env->grid_rows, env->grid_cols, env->wrapping, env->unique);
+              }
+              if (mouse_x >= switch_rect4_Rows.x && mouse_x <= switch_rect4_Rows.x + switch_rect4_Rows.w && mouse_y >= switch_rect4_Rows.y &&
+                  mouse_y <= switch_rect4_Rows.y + switch_rect4_Rows.h) {
+                switch_state4_Rows = !switch_state4_Rows;
+                switch_state2_Rows = 0, switch_state6_Rows = 0, switch_state8_Rows = 0, switch_state10_Rows = 0;
+                env->grid_rows = 4;  // setting col size
+                env->g = game_new_empty_ext(env->grid_rows, env->grid_cols, env->wrapping, env->unique);
+              }
+              if (mouse_x >= switch_rect6_Rows.x && mouse_x <= switch_rect6_Rows.x + switch_rect6_Rows.w && mouse_y >= switch_rect6_Rows.y &&
+                  mouse_y <= switch_rect6_Rows.y + switch_rect6_Rows.h) {
+                switch_state6_Rows = !switch_state6_Rows;
+                switch_state2_Rows = 0, switch_state4_Rows = 0, switch_state8_Rows = 0, switch_state10_Rows = 0;
+                env->grid_rows = 6;  // setting col size
+                env->g = game_new_empty_ext(env->grid_rows, env->grid_cols, env->wrapping, env->unique);
+              }
+              if (mouse_x >= switch_rect8_Rows.x && mouse_x <= switch_rect8_Rows.x + switch_rect8_Rows.w && mouse_y >= switch_rect8_Rows.y &&
+                  mouse_y <= switch_rect8_Rows.y + switch_rect8_Rows.h) {
+                switch_state8_Rows = !switch_state8_Rows;
+                switch_state2_Rows = 0, switch_state4_Rows = 0, switch_state6_Rows = 0, switch_state10_Rows = 0;
+                env->grid_rows = 8;  // setting col size
+                env->g = game_new_empty_ext(env->grid_rows, env->grid_cols, env->wrapping, env->unique);
+              }
+              if (mouse_x >= switch_rect10_Rows.x && mouse_x <= switch_rect10_Rows.x + switch_rect10_Rows.w && mouse_y >= switch_rect10_Rows.y &&
+                  mouse_y <= switch_rect10_Rows.y + switch_rect10_Rows.h) {
+                switch_state10_Rows = !switch_state10_Rows;
+                switch_state2_Rows = 0, switch_state4_Rows = 0, switch_state6_Rows = 0, switch_state8_Rows = 0;
+                env->grid_rows = 10;  // setting col size
+                env->g = game_new_empty_ext(env->grid_rows, env->grid_cols, env->wrapping, env->unique);
               }
             }
           }
@@ -325,36 +409,98 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
 
           // Button Wrapping
           if (switch_state1) {
-            SDL_SetRenderDrawColor(renderer_option,26, 166, 196, 1); // blue color for on state
+            SDL_SetRenderDrawColor(renderer_option, 26, 166, 196, 1);  // blue color for on state
           } else {
-            SDL_SetRenderDrawColor(renderer_option, 0, 0, 0, 1); // black color for off state
+            SDL_SetRenderDrawColor(renderer_option, 0, 0, 0, 1);  // black color for off state
           }
           SDL_RenderFillRect(renderer_option, &switch_rect1);
 
           // Button Unique
           if (switch_state2) {
-            SDL_SetRenderDrawColor(renderer_option,26, 166, 196, 1); // blue color for on state
+            SDL_SetRenderDrawColor(renderer_option, 26, 166, 196, 1);  // blue color for on state
           } else {
-            SDL_SetRenderDrawColor(renderer_option, 0, 0, 0, 1); // black color for off state
+            SDL_SetRenderDrawColor(renderer_option, 0, 0, 0, 1);  // black color for off state
           }
           SDL_RenderFillRect(renderer_option, &switch_rect2);
 
-          // Button Cols
-          if (switch_state3) {
-            SDL_SetRenderDrawColor(renderer_option,26, 166, 196, 1); // blue color for on state
+          // Button Default game
+          if (switch_state_default_game) {
+            SDL_SetRenderDrawColor(renderer_option, 26, 166, 196, 1);  // blue color for on state
           } else {
-            SDL_SetRenderDrawColor(renderer_option, 0, 0, 0, 1); // black color for off state
+            SDL_SetRenderDrawColor(renderer_option, 0, 0, 0, 1);  // black color for off state
           }
-          SDL_RenderFillRect(renderer_option, &switch_rect3);
-
-          // Button Cols
-          if (switch_state4) {
-            SDL_SetRenderDrawColor(renderer_option,26, 166, 196, 1); // blue color for on state
+          SDL_RenderFillRect(renderer_option, &Default_game);
+          // Button Cols coloration
+          if (switch_state2_Cols) {
+            SDL_SetRenderDrawColor(renderer_option, 26, 166, 196, 1);  // blue color for on state
           } else {
-            SDL_SetRenderDrawColor(renderer_option, 0, 0, 0, 1); // black color for off state
+            SDL_SetRenderDrawColor(renderer_option, 0, 0, 0, 1);  // black color for off state
           }
-          SDL_RenderFillRect(renderer_option, &switch_rect4);
+          SDL_RenderFillRect(renderer_option, &switch_rect2_Cols);
 
+          if (switch_state4_Cols) {
+            SDL_SetRenderDrawColor(renderer_option, 26, 166, 196, 1);  // blue color for on state
+          } else {
+            SDL_SetRenderDrawColor(renderer_option, 0, 0, 0, 1);  // black color for off state
+          }
+          SDL_RenderFillRect(renderer_option, &switch_rect4_Cols);
+
+          if (switch_state6_Cols) {
+            SDL_SetRenderDrawColor(renderer_option, 26, 166, 196, 1);  // blue color for on state
+          } else {
+            SDL_SetRenderDrawColor(renderer_option, 0, 0, 0, 1);  // black color for off state
+          }
+          SDL_RenderFillRect(renderer_option, &switch_rect6_Cols);
+
+          if (switch_state8_Cols) {
+            SDL_SetRenderDrawColor(renderer_option, 26, 166, 196, 1);  // blue color for on state
+          } else {
+            SDL_SetRenderDrawColor(renderer_option, 0, 0, 0, 1);  // black color for off state
+          }
+          SDL_RenderFillRect(renderer_option, &switch_rect8_Cols);
+
+          if (switch_state10_Cols) {
+            SDL_SetRenderDrawColor(renderer_option, 26, 166, 196, 1);  // blue color for on state
+          } else {
+            SDL_SetRenderDrawColor(renderer_option, 0, 0, 0, 1);  // black color for off state
+          }
+          SDL_RenderFillRect(renderer_option, &switch_rect10_Cols);
+
+          // Button Rows coloration
+          if (switch_state2_Rows) {
+            SDL_SetRenderDrawColor(renderer_option, 26, 166, 196, 1);  // blue color for on state
+          } else {
+            SDL_SetRenderDrawColor(renderer_option, 0, 0, 0, 1);  // black color for off state
+          }
+          SDL_RenderFillRect(renderer_option, &switch_rect2_Rows);
+
+          if (switch_state4_Rows) {
+            SDL_SetRenderDrawColor(renderer_option, 26, 166, 196, 1);  // blue color for on state
+          } else {
+            SDL_SetRenderDrawColor(renderer_option, 0, 0, 0, 1);  // black color for off state
+          }
+          SDL_RenderFillRect(renderer_option, &switch_rect4_Rows);
+
+          if (switch_state6_Rows) {
+            SDL_SetRenderDrawColor(renderer_option, 26, 166, 196, 1);  // blue color for on state
+          } else {
+            SDL_SetRenderDrawColor(renderer_option, 0, 0, 0, 1);  // black color for off state
+          }
+          SDL_RenderFillRect(renderer_option, &switch_rect6_Rows);
+
+          if (switch_state8_Rows) {
+            SDL_SetRenderDrawColor(renderer_option, 26, 166, 196, 1);  // blue color for on state
+          } else {
+            SDL_SetRenderDrawColor(renderer_option, 0, 0, 0, 1);  // black color for off state
+          }
+          SDL_RenderFillRect(renderer_option, &switch_rect8_Rows);
+
+          if (switch_state10_Rows) {
+            SDL_SetRenderDrawColor(renderer_option, 26, 166, 196, 1);  // blue color for on state
+          } else {
+            SDL_SetRenderDrawColor(renderer_option, 0, 0, 0, 1);  // black color for off state
+          }
+          SDL_RenderFillRect(renderer_option, &switch_rect10_Rows);
           // Update the window with the renderer
           SDL_RenderPresent(renderer_option);
         }
