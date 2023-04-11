@@ -1,31 +1,60 @@
 
 # Takuzu-03a
 
-Le Takuzu est un jeu de réflexion consistant à remplir une grille avec les chiffres 0 et 1 par déduction logique.
+Takuzu is a puzzle game that involves filling a grid with the numbers 0 and 1 using logical deduction.
 
-Ce puzzle est connu sous plusieurs noms dont Takuzu, Tohu-Wa-Vohu, Binairo ou encore Unruly. Il existe quelques variations dans les symboles utilisés pour ce jeu, comme par exemple les lettres X et O, les couleurs blanches et noires, bien que 0 et 1 soient les symboles les plus couramment utilisés.
-## Règles
+This puzzle goes by several names, including Takuzu, Tohu-Wa-Vohu, Binairo, or Unruly. There are some variations in the symbols used for this game, such as the letters X and O, black and white colors, although 0 and 1 are the most commonly used symbols.
 
-On a une grille similaire à celle du sudoku, que l'on doit remplir avec des zeros et des uns.
+## Compilation
 
-Chaque ligne et colonne doit contenir le même nombre de zéros et de uns.
-Aucune ligne ou colonne ne peut contenir trois cases consécutives du même nombre.
-Certains jeux incluent également une règle supplémentaire (nommée unicité), indiquant qu'aucune ligne ou colonne ne peut contenir la même séquence exacte de zéros et de uns. (Une ligne et une colonne peuvent correspondre, cependant.) Mais nous ne considérerons pas cette règle ici.
+With CMake:
 
-Par convention, le carré de la ième ligne et de la jième colonne de la grille est appelé la coordonnée (i,j), et la coordonnée (0,0) correspond au coin supérieur gauche (comme dans les matrices) .
+```bash
+mkdir build ; cd build ; cmake .. ; make
+```
+## Rules
 
-Notez que les carrés immuables/inchageables sont représentés par un caractère majuscule.
+We have a grid similar to that of Sudoku, which we must fill with zeros and ones.
 
-En résumé, le jeu utilise 3 états carrés différents, qui peuvent être imprimés dans le terminal comme un seul caractère :
-* vide/empty en mettant : e i j ; où i et j sont les coordonnées
-* un/one/black/noir : b i j
-* zero/white/blanc : w i j
+Each row and column must contain the same number of zeros and ones.
+No row or column can contain three consecutive cells of the same number.
+Some games also include an additional rule (called uniqueness), stating that no row or column can contain the same exact sequence of zeros and ones. (A row and a column can match, however.) But we will not consider this rule here.
 
+## How to play on the terminal interface
 
-## Demo
+By convention, the square in the ith row and jth column of the grid is called the coordinate (i,j), and the coordinate (0,0) corresponds to the upper left corner (as in matrices).
+
+Note that immutable/unchangeable squares are represented by a capital letter.
+
+In summary, the game uses 3 different square states, which can be printed in the terminal as a single character:
+
+* empty, by typing: e i j; where i and j are the coordinates
+* one/black, by typing: b i j
+* zero/white, by typing: w i j
+
+## How to play on the graphical interface
+
+To place a one, zero, or empty cell, you just need to click where you want to place it in the grid.
+Click on a one to place a zero and on a zero to place an empty cell.
+
+Press h for the help to appear, it'll fade away you don't need to press esc or q
+
+* p to restart,
+* q to quit,
+* s to solve,
+* w to save,
+* l to load, (not ready yet)
+* c to check if victory
+* r to redo your move
+* u to undo your move
+
+## Demo game_text
 
 [![Watch the video](https://img.youtube.com/vi/-vVYhvtFbu0/maxresdefault.jpg)](https://www.youtube.com/watch?v=-vVYhvtFbu0)
 
+## Demo game_sdl
+
+[![Watch the video](https://img.youtube.com/vi/-vVYhvtFbu0/maxresdefault.jpg)](https://www.youtube.com/watch?v=rOpK_1YgSs0&ab_channel=Traftmine)
 
 ## Authors
 

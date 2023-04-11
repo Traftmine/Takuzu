@@ -22,6 +22,9 @@
 
 /* **************************************************************** */
 
+/* Veuillez m'excuser pour la redondance de code svp, c'était pas évident de faire autant de boutons */
+
+/* **************************************************************** */
 struct Env_t {
   game g;
   SDL_Texture *background;
@@ -72,6 +75,32 @@ Env *init(SDL_Window *win, SDL_Renderer *ren, int argc, char *argv[]) {
   env->text = SDL_CreateTextureFromSurface(ren, surf);
   SDL_FreeSurface(surf);
   TTF_CloseFont(font);
+
+  /*get current window size */
+  int window_height, window_width;
+  SDL_GetWindowSize(win, &window_width, &window_height);
+
+  /* init grid */
+  env->grid_cell_size = 100;
+  SDL_Color bg_color = {255, 255, 255, 255};      // white background
+  SDL_Color grid_line_color = {44, 44, 44, 255};  // dark grey lines
+  env->grid_background = bg_color;
+  env->grid_line_color = grid_line_color;
+
+  /*Draw grid bck*/
+  SDL_SetRenderDrawColor(ren, env->grid_background.r, env->grid_background.g, env->grid_background.b, env->grid_background.a);
+  SDL_RenderClear(ren);
+
+  /*Draw grid lines*/
+  SDL_SetRenderDrawColor(ren, env->grid_line_color.r, env->grid_line_color.g, env->grid_line_color.b, env->grid_line_color.a);
+
+  for (int x = 0; x < 1 + env->g->nb_cols * env->grid_cell_size; x += env->grid_cell_size) {
+    SDL_RenderDrawLine(ren, x, 0, x, window_height);
+  }
+
+  for (int y = 0; y < 1 + env->g->nb_rows * env->grid_cell_size; y += env->grid_cell_size) {
+    SDL_RenderDrawLine(ren, 0, y, window_width, y);
+  }
 
   return env;
 }
@@ -326,7 +355,7 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
                 switch_state_default_game = !switch_state_default_game;
                 env->g = game_default();
               }
-              // Button Cols
+              // Buttons Cols
               if (mouse_x >= switch_rect2_Cols.x && mouse_x <= switch_rect2_Cols.x + switch_rect2_Cols.w && mouse_y >= switch_rect2_Cols.y &&
                   mouse_y <= switch_rect2_Cols.y + switch_rect2_Cols.h) {
                 env->grid_cols = 2;  // setting col size
@@ -362,7 +391,7 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
                 switch_state2_Cols = 0, switch_state4_Cols = 0, switch_state6_Cols = 0, switch_state8_Cols = 0;
                 env->g = game_new_empty_ext(env->grid_rows, env->grid_cols, env->wrapping, env->unique);
               }
-              // Button Rows
+              // Buttons Rows
               if (mouse_x >= switch_rect2_Rows.x && mouse_x <= switch_rect2_Rows.x + switch_rect2_Rows.w && mouse_y >= switch_rect2_Rows.y &&
                   mouse_y <= switch_rect2_Rows.y + switch_rect2_Rows.h) {
                 switch_state2_Rows = !switch_state2_Rows;
@@ -405,7 +434,7 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
           // Clear the renderer with the current draw color
           SDL_RenderClear(renderer_option);
 
-          // Draw the switch button
+          // Draw the switch buttons
 
           // Button Wrapping
           if (switch_state1) {
@@ -430,6 +459,7 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
             SDL_SetRenderDrawColor(renderer_option, 0, 0, 0, 1);  // black color for off state
           }
           SDL_RenderFillRect(renderer_option, &Default_game);
+
           // Button Cols coloration
           if (switch_state2_Cols) {
             SDL_SetRenderDrawColor(renderer_option, 26, 166, 196, 1);  // blue color for on state
@@ -467,6 +497,7 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
           SDL_RenderFillRect(renderer_option, &switch_rect10_Cols);
 
           // Button Rows coloration
+
           if (switch_state2_Rows) {
             SDL_SetRenderDrawColor(renderer_option, 26, 166, 196, 1);  // blue color for on state
           } else {

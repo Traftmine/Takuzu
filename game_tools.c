@@ -132,41 +132,33 @@ void game_solve_rec(game g, uint i, uint j, uint *counter, uint S_ZEROs, uint S_
 
 /* ************************************************************************** */
 
-game one_game_solution(game g, uint i, uint j, uint S_ZEROs, uint S_ONEs) {
+game one_game_solution(game g, uint i, uint j) {
   if (game_nb_rows(g) <= i) {
     if (game_is_over(g)) {
       return g;
     }
     return NULL;
   } else if (game_nb_cols(g) <= j) {
-    return one_game_solution(g, i + 1, 0, game_nb_cols(g) / 2, game_nb_cols(g) / 2);
+    return one_game_solution(g, i + 1, 0);
   } else if (game_is_immutable(g, i, j)) {
-    if (game_get_number(g, i, j) == 0) {
-      return one_game_solution(g, i, j + 1, S_ZEROs - 1, S_ONEs);
-    }
-    return one_game_solution(g, i, j + 1, S_ZEROs, S_ONEs - 1);
+    return one_game_solution(g, i, j + 1);
   } else {
-    if (S_ZEROs > 0 && game_check_move(g, i, j, S_ZERO)) {
-      game_set_square(g, i, j, S_ZERO);
-      game game_solution = one_game_solution(g, i, j + 1, S_ZEROs - 1, S_ONEs);
-      if (game_solution != NULL) {
-        return game_solution;
-      }
+    game_set_square(g, i, j, S_ZERO);
+    game game_solution = one_game_solution(g, i, j + 1);
+    if (game_solution != NULL) {
+      return game_solution;
     }
-    if (S_ONEs > 1 && game_check_move(g, i, j, S_ONE)) {
-      game_set_square(g, i, j, S_ONE);
-      return one_game_solution(g, i, j + 1, S_ZEROs, S_ONEs - 1);
-    }
-    return NULL;
+    game_set_square(g, i, j, S_ONE);
+    return one_game_solution(g, i, j + 1);
   }
+  return NULL;
 }
 
 /* ************************************************************************** */
 
 uint game_nb_solutions(cgame g) {
   uint i = 0, j = 0, counter = 0, begin = game_nb_cols(g) / 2;
-  game g_nb_sols = game_copy(g);  // copy the game because it's unchangeable so that I can
-                                  // change it when calling recursive version
+  game g_nb_sols = game_copy(g);  // copy the game because it's unchangeable so that I can change it when calling recursive version
   game_solve_rec(g_nb_sols, i, j, &counter, begin, begin);
   return counter;
 }
