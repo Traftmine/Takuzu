@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title >Options</title>
+    <link href="options.css" rel="stylesheet">
+  </head>
+  <body>
+    <h1 class="title">Options</h1>
+    <form class="form">
+      <label for="rows">Rows:</label>
+      <input type="number" id="rows" name="rows" min="2" max="10" value="6"><br>
+      <label for="cols">Columns:</label>
+      <input type="number" id="cols" name="cols" min="2" max="10" value="6"><br>
+      <label for="unique">Unique:</label>
+      <input type="checkbox" id="unique" name="unique"><br>
+      <label for="wrapping">Wrapping:</label>
+      <input type="checkbox" id="wrapping" name="wrapping"><br>
+      <button class="submit" id="submit" type="submit">Submit</button>
+    </form>
+    <button class="back-to-main" id="back-to-main">Back to main</button>
+    <script src="options.js"></script>
+  </body>
+</html>

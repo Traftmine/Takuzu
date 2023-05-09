@@ -1,0 +1,31 @@
+@font-face {
+    font-family: 'Crush';
+    src: url('RobotCrush.ttf');
+  }
+
+.title {
+    text-align: center;
+    font-size: 5rem;
+    font-family: 'Crush', sans-serif;
+}
+
+.back-to-main {
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: auto;
+}
+
+.submit {
+    position: absolute;
+    margin-top: 10px;
+    left: 50%
+}
+
+.form {
+    font-family: 'Crush', sans-serif;
+    position: absolute;
+    left: 30%;
+    margin: auto;
+}
